@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free browser games: Tic-Tac-Toe, Connect Four, Snake, 2048, Sudoku and Memory. No sign-up, no downloads.">
+<title>The Game Room</title>
+<link rel="canonical" href="https://xoxoxo.live/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#23244A">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Game Room">
+<meta property="og:url" content="https://xoxoxo.live/">
+<meta property="og:title" content="The Game Room">
+<meta property="og:description" content="Free browser games: Tic-Tac-Toe, Connect Four, Snake, 2048, Sudoku and Memory. No sign-up, no downloads.">
+<meta property="og:image" content="https://xoxoxo.live/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tic-Tac-Toe, Connect Four, Snake, 2048, Sudoku and Memory">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Game Room">
+<meta name="twitter:description" content="Free browser games: Tic-Tac-Toe, Connect Four, Snake, 2048, Sudoku and Memory. No sign-up, no downloads.">
+<meta name="twitter:image" content="https://xoxoxo.live/og.png">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<div class="topbar">
+  <p class="brand"><a href="/">The Game Room</a></p>
+  <nav class="tabs" aria-label="Games">
+    <a class="tab" href="/daily">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="dyF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#FFB627"/></linearGradient></defs>
+  <rect x="12" y="22" width="76" height="72" rx="14" fill="#C9822F"/>
+  <rect x="12" y="18" width="76" height="72" rx="14" fill="url(#dyF)"/>
+  <rect x="20" y="38" width="60" height="44" rx="8" fill="#FFF8EC"/>
+  <rect x="28" y="8" width="11" height="22" rx="5.5" fill="#8A5A12"/>
+  <rect x="61" y="8" width="11" height="22" rx="5.5" fill="#8A5A12"/>
+  <g font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="26" text-anchor="middle">
+    <text x="50" y="72" fill="#F2622E">1</text>
+  </g>
+</svg></span>
+      <span class="lbl">Daily</span><span class="lbl-short">Daily</span>
+    </a>
+    <a class="tab" href="/xo">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="xoA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient><linearGradient id="xoB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FE0CB"/><stop offset="1" stop-color="#22B0A0"/></linearGradient></defs>
+  <g transform="rotate(-8 34 36)">
+    <rect x="12" y="30" width="44" height="13" rx="6.5" fill="#C94A1E" transform="rotate(45 34 36)"/>
+    <rect x="12" y="30" width="44" height="13" rx="6.5" fill="#C94A1E" transform="rotate(-45 34 36)"/>
+    <rect x="12" y="27" width="44" height="13" rx="6.5" fill="url(#xoA)" transform="rotate(45 34 33)"/>
+    <rect x="12" y="27" width="44" height="13" rx="6.5" fill="url(#xoA)" transform="rotate(-45 34 33)"/>
+  </g>
+  <circle cx="69" cy="69" r="23" fill="#159487"/>
+  <circle cx="69" cy="66" r="23" fill="url(#xoB)"/>
+  <circle cx="69" cy="66" r="11" fill="#EEF0FF"/>
+</svg></span>
+      <span class="lbl">Tic-Tac-Toe</span><span class="lbl-short">XO</span>
+    </a>
+    <a class="tab" href="/connect-four">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="c4F" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E61B8"/><stop offset="1" stop-color="#3D3F86"/></linearGradient><linearGradient id="c4R" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6B6B"/><stop offset="1" stop-color="#E8434F"/></linearGradient><linearGradient id="c4Y" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD84D"/><stop offset="1" stop-color="#F5B518"/></linearGradient></defs>
+  <rect x="10" y="30" width="80" height="62" rx="14" fill="#2F3170"/>
+  <rect x="10" y="26" width="80" height="62" rx="14" fill="url(#c4F)"/>
+  <circle cx="31" cy="70" r="10" fill="url(#c4R)"/>
+  <circle cx="55" cy="70" r="10" fill="url(#c4Y)"/>
+  <circle cx="79" cy="70" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="31" cy="45" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="55" cy="45" r="10" fill="url(#c4R)"/>
+  <circle cx="79" cy="45" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="79" cy="14" r="11" fill="#C9333E"/>
+  <circle cx="79" cy="11" r="11" fill="url(#c4Y)"/>
+</svg></span>
+      <span class="lbl">Connect Four</span><span class="lbl-short">4-Row</span>
+    </a>
+    <a class="tab" href="/snake">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="snB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5AE3CF"/><stop offset="1" stop-color="#22B0A0"/></linearGradient><linearGradient id="snA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <path d="M14 72 h26 a12 12 0 0 0 12-12 v-8 a12 12 0 0 1 12-12 h14"
+        stroke="#159487" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <path d="M14 68 h26 a12 12 0 0 0 12-12 v-8 a12 12 0 0 1 12-12 h14"
+        stroke="url(#snB)" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <circle cx="80" cy="36" r="4.5" fill="#0E5F57"/>
+  <circle cx="26" cy="24" r="12" fill="#C94A1E"/>
+  <circle cx="26" cy="21" r="12" fill="url(#snA)"/>
+  <ellipse cx="22" cy="17" rx="4" ry="3" fill="#fff" opacity=".55"/>
+</svg></span>
+      <span class="lbl">Snake</span><span class="lbl-short">Snake</span>
+    </a>
+    <a class="tab" href="/2048">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="tfA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#FFB627"/></linearGradient><linearGradient id="tfB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFA46B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <rect x="8" y="12" width="38" height="38" rx="11" fill="#C9CFF5"/>
+  <rect x="8" y="8" width="38" height="38" rx="11" fill="#DDE2FF"/>
+  <rect x="54" y="12" width="38" height="38" rx="11" fill="#C9822F"/>
+  <rect x="54" y="8" width="38" height="38" rx="11" fill="url(#tfA)"/>
+  <rect x="8" y="58" width="38" height="38" rx="11" fill="#159487"/>
+  <rect x="8" y="54" width="38" height="38" rx="11" fill="#2BC4AE"/>
+  <rect x="54" y="58" width="38" height="38" rx="11" fill="#C94A1E"/>
+  <rect x="54" y="54" width="38" height="38" rx="11" fill="url(#tfB)"/>
+</svg></span>
+      <span class="lbl">2048</span><span class="lbl-short">2048</span>
+    </a>
+    <a class="tab" href="/sudoku">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="sdF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5AE3CF"/><stop offset="1" stop-color="#22B0A0"/></linearGradient></defs>
+  <rect x="8" y="14" width="84" height="84" rx="14" fill="#159487"/>
+  <rect x="8" y="10" width="84" height="84" rx="14" fill="url(#sdF)"/>
+  <rect x="16" y="18" width="68" height="68" rx="8" fill="#F7F8FF"/>
+  <g stroke="#B9C0EE" stroke-width="4" stroke-linecap="round">
+    <line x1="38.7" y1="20" x2="38.7" y2="84"/><line x1="61.3" y1="20" x2="61.3" y2="84"/>
+    <line x1="18" y1="40.7" x2="82" y2="40.7"/><line x1="18" y1="63.3" x2="82" y2="63.3"/>
+  </g>
+  <g font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="19" text-anchor="middle">
+    <text x="27" y="36" fill="#F2622E">5</text>
+    <text x="50" y="59" fill="#FFB627">3</text>
+    <text x="73" y="81" fill="#4A4C9B">7</text>
+  </g>
+</svg></span>
+      <span class="lbl">Sudoku</span><span class="lbl-short">Sudoku</span>
+    </a>
+    <a class="tab" href="/memory">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="mmA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E71C9"/><stop offset="1" stop-color="#4A4C9B"/></linearGradient><linearGradient id="mmB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <g transform="rotate(-10 30 54)">
+    <rect x="10" y="26" width="40" height="56" rx="10" fill="#33356F"/>
+    <rect x="10" y="22" width="40" height="56" rx="10" fill="url(#mmA)"/>
+    <circle cx="30" cy="50" r="9" fill="#8F92E0" opacity=".75"/>
+  </g>
+  <g transform="rotate(9 66 50)">
+    <rect x="50" y="20" width="40" height="56" rx="10" fill="#C94A1E"/>
+    <rect x="50" y="16" width="40" height="56" rx="10" fill="url(#mmB)"/>
+    <path d="M62 44 l6 7 12 -14" stroke="#fff" stroke-width="7"
+          stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg></span>
+      <span class="lbl">Memory</span><span class="lbl-short">Memory</span>
+    </a>
+  </nav>
+</div>
+
+<main class="panel">
+  <header>
+    <h1><span class="mx">The</span> <span class="mo">Game Room</span></h1>
+    <p class="tagline">Small games worth playing. No sign-up, no downloads.</p>
+  </header>
+<p class="today-summary" id="today-summary" hidden></p>
+<div class="game-cards">
+  <a class="daily-banner" href="/daily" data-game="daily">
+    <span class="db-badge">Daily</span>
+    <span class="db-text">
+      <span class="db-title">Today's puzzle</span>
+      <span class="db-sub">One Sudoku a day. The same one for everyone. Share how you did.</span>
+    </span>
+    <span class="db-today" hidden></span>
+    <span class="db-go" aria-hidden="true">&rarr;</span>
+  </a>
+
+    <a class="game-card" href="/xo" data-game="xo">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="xoA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient><linearGradient id="xoB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FE0CB"/><stop offset="1" stop-color="#22B0A0"/></linearGradient></defs>
+  <g transform="rotate(-8 34 36)">
+    <rect x="12" y="30" width="44" height="13" rx="6.5" fill="#C94A1E" transform="rotate(45 34 36)"/>
+    <rect x="12" y="30" width="44" height="13" rx="6.5" fill="#C94A1E" transform="rotate(-45 34 36)"/>
+    <rect x="12" y="27" width="44" height="13" rx="6.5" fill="url(#xoA)" transform="rotate(45 34 33)"/>
+    <rect x="12" y="27" width="44" height="13" rx="6.5" fill="url(#xoA)" transform="rotate(-45 34 33)"/>
+  </g>
+  <circle cx="69" cy="69" r="23" fill="#159487"/>
+  <circle cx="69" cy="66" r="23" fill="url(#xoB)"/>
+  <circle cx="69" cy="66" r="11" fill="#EEF0FF"/>
+</svg>
+      </span>
+      <span class="gc-name">Tic-Tac-Toe</span>
+      <span class="gc-desc">Three in a row. Play a friend, or a computer that never loses.</span>
+      <span class="gc-meta">2 players &middot; vs computer</span>
+      <span class="gc-today" hidden></span>
+    </a>
+
+    <a class="game-card" href="/connect-four" data-game="connect-four">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="c4F" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E61B8"/><stop offset="1" stop-color="#3D3F86"/></linearGradient><linearGradient id="c4R" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6B6B"/><stop offset="1" stop-color="#E8434F"/></linearGradient><linearGradient id="c4Y" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD84D"/><stop offset="1" stop-color="#F5B518"/></linearGradient></defs>
+  <rect x="10" y="30" width="80" height="62" rx="14" fill="#2F3170"/>
+  <rect x="10" y="26" width="80" height="62" rx="14" fill="url(#c4F)"/>
+  <circle cx="31" cy="70" r="10" fill="url(#c4R)"/>
+  <circle cx="55" cy="70" r="10" fill="url(#c4Y)"/>
+  <circle cx="79" cy="70" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="31" cy="45" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="55" cy="45" r="10" fill="url(#c4R)"/>
+  <circle cx="79" cy="45" r="10" fill="#2A2C63" opacity=".45"/>
+  <circle cx="79" cy="14" r="11" fill="#C9333E"/>
+  <circle cx="79" cy="11" r="11" fill="url(#c4Y)"/>
+</svg>
+      </span>
+      <span class="gc-name">Connect Four</span>
+      <span class="gc-desc">Drop discs, connect four. Harder than it looks on Hard.</span>
+      <span class="gc-meta">2 players &middot; vs computer</span>
+      <span class="gc-today" hidden></span>
+    </a>
+
+    <a class="game-card" href="/snake" data-game="snake">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="snB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5AE3CF"/><stop offset="1" stop-color="#22B0A0"/></linearGradient><linearGradient id="snA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <path d="M14 72 h26 a12 12 0 0 0 12-12 v-8 a12 12 0 0 1 12-12 h14"
+        stroke="#159487" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <path d="M14 68 h26 a12 12 0 0 0 12-12 v-8 a12 12 0 0 1 12-12 h14"
+        stroke="url(#snB)" stroke-width="21" stroke-linecap="round" fill="none"/>
+  <circle cx="80" cy="36" r="4.5" fill="#0E5F57"/>
+  <circle cx="26" cy="24" r="12" fill="#C94A1E"/>
+  <circle cx="26" cy="21" r="12" fill="url(#snA)"/>
+  <ellipse cx="22" cy="17" rx="4" ry="3" fill="#fff" opacity=".55"/>
+</svg>
+      </span>
+      <span class="gc-name">Snake</span>
+      <span class="gc-desc">Eat, grow, don&#39;t bite yourself. Beat your own best.</span>
+      <span class="gc-meta">solo &middot; 3 speeds</span>
+      <span class="gc-today" hidden></span>
+    </a>
+    <a class="game-card" href="/2048" data-game="2048">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="tfA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98A"/><stop offset="1" stop-color="#FFB627"/></linearGradient><linearGradient id="tfB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFA46B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <rect x="8" y="12" width="38" height="38" rx="11" fill="#C9CFF5"/>
+  <rect x="8" y="8" width="38" height="38" rx="11" fill="#DDE2FF"/>
+  <rect x="54" y="12" width="38" height="38" rx="11" fill="#C9822F"/>
+  <rect x="54" y="8" width="38" height="38" rx="11" fill="url(#tfA)"/>
+  <rect x="8" y="58" width="38" height="38" rx="11" fill="#159487"/>
+  <rect x="8" y="54" width="38" height="38" rx="11" fill="#2BC4AE"/>
+  <rect x="54" y="58" width="38" height="38" rx="11" fill="#C94A1E"/>
+  <rect x="54" y="54" width="38" height="38" rx="11" fill="url(#tfB)"/>
+</svg>
+      </span>
+      <span class="gc-name">2048</span>
+      <span class="gc-desc">Join matching tiles until you reach 2048. One more go, every time.</span>
+      <span class="gc-meta">solo &middot; undo</span>
+      <span class="gc-today" hidden></span>
+    </a>
+    <a class="game-card" href="/sudoku" data-game="sudoku">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="sdF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5AE3CF"/><stop offset="1" stop-color="#22B0A0"/></linearGradient></defs>
+  <rect x="8" y="14" width="84" height="84" rx="14" fill="#159487"/>
+  <rect x="8" y="10" width="84" height="84" rx="14" fill="url(#sdF)"/>
+  <rect x="16" y="18" width="68" height="68" rx="8" fill="#F7F8FF"/>
+  <g stroke="#B9C0EE" stroke-width="4" stroke-linecap="round">
+    <line x1="38.7" y1="20" x2="38.7" y2="84"/><line x1="61.3" y1="20" x2="61.3" y2="84"/>
+    <line x1="18" y1="40.7" x2="82" y2="40.7"/><line x1="18" y1="63.3" x2="82" y2="63.3"/>
+  </g>
+  <g font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="19" text-anchor="middle">
+    <text x="27" y="36" fill="#F2622E">5</text>
+    <text x="50" y="59" fill="#FFB627">3</text>
+    <text x="73" y="81" fill="#4A4C9B">7</text>
+  </g>
+</svg>
+      </span>
+      <span class="gc-name">Sudoku</span>
+      <span class="gc-desc">One to nine, once each. Three difficulties, always solvable by logic.</span>
+      <span class="gc-meta">solo &middot; 3 levels</span>
+      <span class="gc-today" hidden></span>
+    </a>
+    <a class="game-card" href="/memory" data-game="memory">
+      <span class="gc-art" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+  <defs><linearGradient id="mmA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6E71C9"/><stop offset="1" stop-color="#4A4C9B"/></linearGradient><linearGradient id="mmB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A5B"/><stop offset="1" stop-color="#F2622E"/></linearGradient></defs>
+  <g transform="rotate(-10 30 54)">
+    <rect x="10" y="26" width="40" height="56" rx="10" fill="#33356F"/>
+    <rect x="10" y="22" width="40" height="56" rx="10" fill="url(#mmA)"/>
+    <circle cx="30" cy="50" r="9" fill="#8F92E0" opacity=".75"/>
+  </g>
+  <g transform="rotate(9 66 50)">
+    <rect x="50" y="20" width="40" height="56" rx="10" fill="#C94A1E"/>
+    <rect x="50" y="16" width="40" height="56" rx="10" fill="url(#mmB)"/>
+    <path d="M62 44 l6 7 12 -14" stroke="#fff" stroke-width="7"
+          stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
+      </span>
+      <span class="gc-name">Memory</span>
+      <span class="gc-desc">Find every pair in as few moves as you can. Six, ten or fifteen pairs.</span>
+      <span class="gc-meta">solo &middot; 3 sizes</span>
+      <span class="gc-today" hidden></span>
+    </a>
+  </div>
+</main>
+
+<p class="sr" id="live" aria-live="assertive"></p>
+
+<div class="ad-slot" id="ad-slot" data-placement="home_below_games" data-game="home" data-filled="0"></div>
+<p class="ad-label">Advertisement</p>
+
+<section class="records" id="records" hidden>
+    <h2 class="records-h">Your records</h2>
+    <table class="records-t">
+      <thead><tr><th>Game</th><th>Played</th><th>Won</th><th>Best</th></tr></thead>
+      <tbody id="records-body"></tbody>
+    </table>
+    <p class="records-note">Stored on this device only. Nothing is uploaded.</p>
+  </section>
+
+<footer class="site-foot">
+  <p>Free browser games. No sign-up, no downloads.</p>
+  <p><a href="/privacy">Privacy</a></p>
+</footer>
+
+<script src="/static/adlab.js"></script>
+<script src="/static/game-room.js"></script>
+<script src="/static/today.js"></script>
+<script src="/static/records.js"></script>
+<script src="/static/adtag.js"></script>
+
+<script>
+/* Register the service worker so the games work offline once visited.
+   Failure is silent and harmless: without it the site simply needs a network. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

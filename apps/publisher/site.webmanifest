@@ -1,0 +1,15 @@
+{
+  "name": "The Game Room",
+  "short_name": "Game Room",
+  "description": "Free browser games. No sign-up, no downloads.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF0FF",
+  "theme_color": "#23244A",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

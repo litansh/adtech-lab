@@ -1,0 +1,217 @@
+{
+  "_comment": "What is out there, and what it implies we should build. Refreshed by a human (or the Horizon agent) with web access; read by tools/productctl benchmark, which has none. See docs/product-benchmark.md.",
+  "as_of": "2026-08-29",
+  "sources": [
+    {
+      "claim": "Connections has overtaken Wordle as the most-played NYT puzzle by daily active players.",
+      "url": "https://www.a2zwords.com/en/word-game-stats/"
+    },
+    {
+      "claim": "Connections' design uses deliberate misdirection, four allowed mistakes, and 'one away' near-miss feedback.",
+      "url": "https://word.tips/connections-hints-today/"
+    },
+    {
+      "claim": "Puzzmo is laid out like a magazine page; progress on each puzzle is memorialised on the hub, and puzzles show a visual preview before you start.",
+      "url": "https://www.digitaltrends.com/gaming/puzzmo-announcement-zach-gage-interview/"
+    },
+    {
+      "claim": "Puzzmo's lineup is modernised classics (Cross|word, Really Bad Chess) alongside originals, with groups and leaderboards for low-stakes competition.",
+      "url": "https://puls.games/puzzmo"
+    },
+    {
+      "claim": "Daily puzzles are the dominant new category; the most-played browser games are daily puzzles, durable .io multiplayer, and classics that refuse to fade.",
+      "url": "https://dinogame.gg/blog/most-played-browser-games-2026/"
+    },
+    {
+      "claim": "2026 UI: motion earns its keep by guiding rather than flashing; micro-interactions drive engagement; mobile visuals are coupled to haptic feedback.",
+      "url": "https://tubikstudio.com/blog/ui-design-trends-2026/"
+    },
+    {
+      "claim": "Our own Sudoku proves a daily puzzle can be generated rather than curated: seeded from the date, verified to have exactly one solution, zero content cost.",
+      "url": "https://xoxoxo.live/daily"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "sudoku",
+      "mechanic": "deduction"
+    },
+    {
+      "id": "2048",
+      "mechanic": "score-attack"
+    },
+    {
+      "id": "snake",
+      "mechanic": "score-attack"
+    },
+    {
+      "id": "memory",
+      "mechanic": "recall"
+    },
+    {
+      "id": "tic-tac-toe",
+      "mechanic": "adversarial"
+    },
+    {
+      "id": "connect-four",
+      "mechanic": "adversarial"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "daily-hub",
+      "name": "A magazine-style daily hub where every game's result is memorialised",
+      "kind": "platform",
+      "mechanic": "meta",
+      "evidence": "Puzzmo's core structure: a page of puzzle widgets, progress shown when you navigate back",
+      "build_days": 3,
+      "content_sets_per_year": 0,
+      "retention": 5,
+      "fit": 5,
+      "saturation": 1,
+      "shipped": "2026-08-30",
+      "shipped_in": "#62"
+    },
+    {
+      "id": "streaks",
+      "name": "Show the daily streak on the hub",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "The daily already keeps a streak and shows it on /daily; the hub built in #62 does not surface it, which is where Puzzmo puts it",
+      "build_days": 1,
+      "content_sets_per_year": 0,
+      "retention": 3,
+      "fit": 5,
+      "saturation": 2,
+      "constraint": "Snake deliberately has no streak \u2014 game-room.js states the site is not built on loss aversion. This is the daily only."
+    },
+    {
+      "id": "one-away",
+      "name": "Near-miss feedback: tell them how close they were",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "Connections' 'one away' is repeatedly named as the reason a loss still feels like information",
+      "build_days": 1,
+      "content_sets_per_year": 0,
+      "retention": 4,
+      "fit": 4,
+      "saturation": 1,
+      "shipped": "2026-08-30",
+      "shipped_in": "#59"
+    },
+    {
+      "id": "daily-archive",
+      "name": "Play any previous day's puzzle",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "The seeded generator already makes every past day reproducible at zero storage cost",
+      "build_days": 1,
+      "content_sets_per_year": 0,
+      "retention": 3,
+      "fit": 5,
+      "saturation": 2,
+      "shipped": "2026-09-03",
+      "shipped_in": "#79"
+    },
+    {
+      "id": "haptics",
+      "name": "Haptic feedback on mobile via navigator.vibrate",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "2026 casual UI couples visual payoff to haptics; our traffic is phone-first",
+      "build_days": 1,
+      "content_sets_per_year": 0,
+      "retention": 2,
+      "fit": 4,
+      "saturation": 2
+    },
+    {
+      "id": "grouping-daily",
+      "name": "A Connections-style grouping daily",
+      "kind": "game",
+      "mechanic": "categorisation",
+      "evidence": "The single most-played daily puzzle format in 2026, and a mechanic we have none of",
+      "build_days": 3,
+      "content_sets_per_year": 365,
+      "retention": 5,
+      "fit": 5,
+      "saturation": 4
+    },
+    {
+      "id": "modernised-classic",
+      "name": "A twist on a classic we already ship (e.g. Really Bad Chess's randomised armies)",
+      "kind": "game",
+      "mechanic": "adversarial",
+      "evidence": "Puzzmo's lineup leans on modernised classics; ours are classics with no twist at all",
+      "build_days": 2,
+      "content_sets_per_year": 0,
+      "retention": 3,
+      "fit": 4,
+      "saturation": 2
+    },
+    {
+      "id": "preview-before-start",
+      "name": "Show the puzzle before it starts",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "Puzzmo previews puzzles to let players plan; on a browse page it is also the whole pitch",
+      "build_days": 1,
+      "content_sets_per_year": 0,
+      "retention": 2,
+      "fit": 5,
+      "saturation": 1
+    },
+    {
+      "id": "word-daily",
+      "name": "A Wordle-style word daily, from a curated answer list",
+      "kind": "game",
+      "mechanic": "word",
+      "evidence": "The largest single audience in the category \u2014 and the most cloned thing on the web",
+      "build_days": 2,
+      "content_sets_per_year": 365,
+      "retention": 4,
+      "fit": 5,
+      "saturation": 5,
+      "constraint": "The obligation is the CURATION, not the mechanic. Wordle needs a hand-picked answer list because a random dictionary word makes an unfair puzzle. See word-generated for the version that owes nothing."
+    },
+    {
+      "id": "io-multiplayer",
+      "name": "Real-time .io multiplayer",
+      "kind": "game",
+      "mechanic": "multiplayer",
+      "evidence": "A durable top-ten category \u2014 and a persistent server, which our $100/month ceiling does not have",
+      "build_days": 20,
+      "content_sets_per_year": 0,
+      "retention": 5,
+      "fit": 1,
+      "saturation": 3,
+      "constraint": "Rejected twice: the $100/month ceiling has no persistent server, and a multiplayer game with no audience is unplayable where a single-player one is merely unplayed."
+    },
+    {
+      "id": "glassmorphism",
+      "name": "Restyle the site in frosted glass",
+      "kind": "feature",
+      "mechanic": "meta",
+      "evidence": "Named a 2026 gaming-UI trend \u2014 which is also the argument against dating the site to 2026",
+      "build_days": 3,
+      "content_sets_per_year": 0,
+      "retention": 1,
+      "fit": 3,
+      "saturation": 4,
+      "constraint": "Rejected on taste, not cost: it dates the site to one year."
+    },
+    {
+      "id": "word-generated",
+      "name": "A generated word game \u2014 anagrams, from a word list",
+      "kind": "game",
+      "mechanic": "word",
+      "evidence": "`word` is the largest gap in the survey at 2612 points across 21 posts, and we ship none of it. An anagram or word-ladder puzzle is generated from a static word list and verified solvable, exactly like our Sudoku \u2014 so it reaches that audience without owing a puzzle a day",
+      "build_days": 3,
+      "content_sets_per_year": 0,
+      "retention": 4,
+      "fit": 5,
+      "saturation": 3,
+      "constraint": "Added after noticing the landscape had priced the whole `word` mechanic at 365 puzzles a year. That is the cost of CURATION, not of words: our Sudoku generates a fresh solvable puzzle daily from a seed and owes nothing."
+    }
+  ]
+}

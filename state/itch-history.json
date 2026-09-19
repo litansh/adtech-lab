@@ -1,0 +1,264 @@
+{
+  "readings": [
+    {
+      "date": "2026-08-30",
+      "views": 1,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 0,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 1
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "views": 13,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 10,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 3
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "views": 16,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 13,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 3
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "views": 18,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 14,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "views": 20,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 16,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "views": 22,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 18,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "views": 24,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 20,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-06",
+      "views": 24,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 20,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "views": 25,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 4
+      }
+    },
+    {
+      "date": "2026-09-08",
+      "views": 26,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 5
+      }
+    },
+    {
+      "date": "2026-09-09",
+      "views": 26,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 5
+      }
+    },
+    {
+      "date": "2026-09-10",
+      "views": 26,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 5
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-12",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-13",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-14",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-15",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-16",
+      "views": 27,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 0,
+        "Memory — find every pair": 0,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 21,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-17",
+      "views": 30,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 1,
+        "Memory — find every pair": 1,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 22,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    },
+    {
+      "date": "2026-09-18",
+      "views": 31,
+      "downloads": 0,
+      "per_game": {
+        "2048 — join the tiles": 0,
+        "Connect Four — drop, connect, win": 2,
+        "Memory — find every pair": 1,
+        "Snake — levels, streaks and one more go": 0,
+        "Sudoku — always solvable by logic": 22,
+        "Tic-Tac-Toe — pass and play, or beat the computer": 6
+      }
+    }
+  ]
+}

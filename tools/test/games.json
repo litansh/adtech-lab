@@ -1,0 +1,244 @@
+{
+  "viewports": [
+    {
+      "name": "laptop",
+      "w": 1280,
+      "h": 700
+    },
+    {
+      "name": "short",
+      "w": 1280,
+      "h": 560
+    },
+    {
+      "name": "iphone",
+      "w": 390,
+      "h": 664
+    }
+  ],
+  "nav": [
+    {
+      "href": "/daily",
+      "label": "Daily"
+    },
+    {
+      "href": "/xo",
+      "label": "Tic-Tac-Toe"
+    },
+    {
+      "href": "/connect-four",
+      "label": "Connect Four"
+    },
+    {
+      "href": "/snake",
+      "label": "Snake"
+    },
+    {
+      "href": "/2048",
+      "label": "2048"
+    },
+    {
+      "href": "/sudoku",
+      "label": "Sudoku"
+    },
+    {
+      "href": "/memory",
+      "label": "Memory"
+    }
+  ],
+  "pages": [
+    "/",
+    "/daily/",
+    "/xo/",
+    "/connect-four/",
+    "/snake/",
+    "/2048/",
+    "/sudoku/",
+    "/memory/",
+    "/privacy/"
+  ],
+  "games": [
+    {
+      "path": "/daily/",
+      "name": "Daily",
+      "board": ".sd-wrap",
+      "requires": [
+        "#daily-board",
+        "#dy-pad",
+        "#dy-status",
+        "#dy-timer",
+        "#dy-streak",
+        "#dy-number"
+      ],
+      "play": [
+        {
+          "click": "#daily-board .sd-cell:not(.given)"
+        },
+        {
+          "click": "#dy-pad button[data-v='5']"
+        },
+        {
+          "wait": 0.3
+        }
+      ],
+      "expect": "document.querySelectorAll('#daily-board .sd-cell').length === 81"
+    },
+    {
+      "path": "/xo/",
+      "name": "Tic-Tac-Toe",
+      "board": ".board-wrap",
+      "requires": [
+        "#board",
+        "#status",
+        "#again",
+        "#sound",
+        "#levels"
+      ],
+      "play": [
+        {
+          "click": "#board > *"
+        },
+        {
+          "wait": 0.9
+        }
+      ],
+      "expect": "document.querySelectorAll('#board .mark').length >= 1"
+    },
+    {
+      "path": "/connect-four/",
+      "name": "Connect Four",
+      "board": "#c4-frame",
+      "requires": [
+        "#c4-grid",
+        "#c4-cols",
+        "#c4-status",
+        "#c4-again",
+        "#sound"
+      ],
+      "play": [
+        {
+          "click": "#c4-cols > *"
+        },
+        {
+          "wait": 1.4
+        }
+      ],
+      "expect": "document.querySelectorAll('#c4-grid .disc').length >= 1"
+    },
+    {
+      "path": "/snake/",
+      "name": "Snake",
+      "board": ".snake-wrap",
+      "requires": [
+        "#snake",
+        "#sn-score",
+        "#sn-best",
+        "#sn-again",
+        "#sn-status",
+        "#sn-level",
+        "#sn-bar",
+        "#sn-bar-fill"
+      ],
+      "play": [
+        {
+          "key": "ArrowRight",
+          "vk": 39
+        },
+        {
+          "wait": 1.0
+        }
+      ],
+      "expect": "document.getElementById('snake').width > 0"
+    },
+    {
+      "path": "/2048/",
+      "name": "2048",
+      "board": ".tf-wrap",
+      "requires": [
+        "#g2048",
+        "#tf-score",
+        "#tf-best",
+        "#tf-status",
+        "#tf-undo",
+        "#tf-again",
+        "#tf-level",
+        "#tf-bar",
+        "#tf-bar-fill"
+      ],
+      "play": [
+        {
+          "key": "ArrowLeft",
+          "vk": 37
+        },
+        {
+          "key": "ArrowUp",
+          "vk": 38
+        },
+        {
+          "key": "ArrowLeft",
+          "vk": 37
+        },
+        {
+          "key": "ArrowUp",
+          "vk": 38
+        },
+        {
+          "key": "ArrowRight",
+          "vk": 39
+        },
+        {
+          "key": "ArrowDown",
+          "vk": 40
+        }
+      ],
+      "expect": "document.querySelectorAll('#g2048 .tf-tile').length >= 2 && !document.getElementById('tf-undo').disabled"
+    },
+    {
+      "path": "/sudoku/",
+      "name": "Sudoku",
+      "board": ".sd-wrap",
+      "requires": [
+        "#sudoku",
+        "#sd-pad",
+        "#sd-status",
+        "#sd-again",
+        "#sd-levels",
+        "#sd-mistakes"
+      ],
+      "play": [
+        {
+          "click": "#sudoku .sd-cell:not(.given)"
+        },
+        {
+          "click": "#sd-pad button[data-v='5']"
+        },
+        {
+          "wait": 0.3
+        }
+      ],
+      "expect": "document.querySelectorAll('#sudoku .sd-cell').length === 81 && document.querySelectorAll('#sudoku .sd-cell.given').length > 20"
+    },
+    {
+      "path": "/memory/",
+      "name": "Memory",
+      "board": ".mm-wrap",
+      "requires": [
+        "#memory",
+        "#mm-status",
+        "#mm-again",
+        "#mm-levels",
+        "#mm-moves",
+        "#mm-best"
+      ],
+      "play": [
+        {
+          "click": "#memory .mm-card"
+        },
+        {
+          "wait": 0.3
+        }
+      ],
+      "expect": "document.querySelectorAll('#memory .mm-card.up, #memory .mm-card.done').length >= 1"
+    }
+  ]
+}

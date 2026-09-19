@@ -1,0 +1,218 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# No AWS access here on purpose. CI proves the code is correct; it does not
+# need credentials to do that, and a workflow that runs on pull_request must
+# never hold any.
+permissions:
+  contents: read
+
+jobs:
+  ad-server:
+    name: ad server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: services/ad-server/go.sum
+      - name: gofmt
+        working-directory: services/ad-server
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "these files are not gofmt'd:"; echo "$unformatted"; exit 1
+          fi
+      - name: go vet
+        working-directory: services/ad-server
+        run: go vet ./...
+      # -race because the double-RUnlock that killed the Lambda on its first
+      # request was a data race that only -race would have caught.
+      - name: go test -race
+        working-directory: services/ad-server
+        run: go test ./... -race -count=1
+
+  tools:
+    name: tools build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      # Every tool module, discovered rather than listed -- a new tool should
+      # be covered by CI because it exists, not because someone remembered to
+      # add it here. agentkit, integrityctl and finopsctl were all missed by
+      # the previous hardcoded list.
+      # Run every agent that needs no traffic exactly the way its workflow
+      # does -- `go -C <tool> run .`, from the tool's own directory.
+      #
+      # Three separate bugs today were a tool assuming the working directory
+      # was the repository root: the Orchestrator's Telegram path, every
+      # Reliability alert, and supplychain --local, which reported our own
+      # supply chain as BROKEN while the files were there all along.
+      #
+      # Reading the code for that mistake clearly does not work. Running it
+      # does, and it costs seconds.
+      - name: no-traffic agents run from their own directory
+        run: |
+          set -e
+          go -C tools/supplychain   run . --local
+          go -C tools/productctl    run . benchmark --landscape ../../product/landscape.json
+          go -C tools/orchestratorctl run . status --state ../../state/plan.json --offline
+          # `next` writes files; `status` does not. Running only the read-only
+          # subcommand is how ROADMAP.md came to be written inside the tool
+          # directory without anything looking wrong.
+          go -C tools/orchestratorctl run . next --offline
+          test -f ROADMAP.md || { echo "ROADMAP.md was not written at the repository root"; exit 1; }
+          test -f state/progress.json || { echo "progress was not written at the repository root"; exit 1; }
+          git diff --quiet -- ROADMAP.md state/progress.json || echo "(regenerated, as expected)"
+          echo "every no-traffic agent runs from its own directory"
+
+      # A workflow file that does not parse fails in zero seconds with no log,
+      # on every push, forever. agent-proposals.yml was in that state from the
+      # day it was added: a commit message body sat at column 0 and ended the
+      # `run: |` block, so the Yield and Feedback agents had never run once.
+      #
+      # GitHub shows this only as "This run likely failed because of a workflow
+      # file issue", which is easy to read as noise. So it is checked here,
+      # where a failure names the file and the line.
+      # `gh issue create --label X` fails outright if X does not exist, and
+      # every agent proposal path had `|| true` after it -- so the first real
+      # finding reported success and created nothing. The labels an agent
+      # attaches are now part of the build.
+      # Five workflows commit to main. Two that overlap lose a race, and the
+      # loser's work is done, messaged, and then thrown away -- which is how an
+      # achievement the Orchestrator had already announced never reached the
+      # repository. A push to main from an agent must rebase and retry.
+      - name: agent pushes to main rebase and retry
+        run: |
+          bad=$(grep -rn --exclude=ci.yml -B 1 '^\s*git push\s*$' .github/workflows/ \
+                | grep -v 'git pull --rebase' | grep 'git push' || true)
+          if [ -n "$bad" ]; then
+            echo "$bad"
+            echo
+            echo 'A bare `git push` to main races the other agents.'
+            echo 'Wrap it: for attempt in 1 2 3; do git pull --rebase ... ; git push && break; done'
+            exit 1
+          fi
+          echo "every push to main rebases and retries"
+
+      - name: no agent create call swallows its own failure
+        run: |
+          # The create statement ends with `--label agent)`. Matching that exact
+          # line keeps the check off the telegram call two lines below, which is
+          # best-effort on purpose: by then the finding is already on GitHub.
+          # --exclude=ci.yml, because this very check contains both strings and
+          # matched itself on the first run. A guard that fails on its own text
+          # is a guard nobody keeps.
+          hits=$(grep -rn --exclude=ci.yml -- '--label agent)' .github/workflows/ | grep '|| true' || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo
+            echo 'Creating the issue or pull request IS the product of that step.'
+            echo 'If it fails the finding does not exist, so the step must fail.'
+            exit 1
+          fi
+          echo "every agent create call reports its own failure"
+
+      - name: every workflow file parses
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 - <<'EOF'
+          import pathlib, sys, yaml
+
+          # PyYAML accepts duplicate keys and silently keeps the last one.
+          # GitHub does not: it refuses the file outright, in zero seconds,
+          # with no log. So this guard once passed a workflow that GitHub had
+          # already rejected -- a checker more permissive than the parser that
+          # matters is a checker that certifies broken files.
+          class Strict(yaml.SafeLoader):
+              pass
+
+          def no_duplicates(loader, node, deep=False):
+              seen = set()
+              for key_node, _ in node.value:
+                  key = loader.construct_object(key_node, deep=deep)
+                  if key in seen:
+                      raise ValueError(f'duplicate key: {key}')
+                  seen.add(key)
+              return yaml.SafeLoader.construct_mapping(loader, node, deep)
+
+          Strict.add_constructor(
+              yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, no_duplicates)
+
+          bad = 0
+          for f in sorted(pathlib.Path('.github/workflows').glob('*.y*ml')):
+              try:
+                  d = yaml.load(f.read_text(), Loader=Strict)
+                  # A workflow with no name is usually a workflow GitHub could
+                  # not read properly either.
+                  assert d.get('name'), 'no name:'
+                  assert d.get('on') or d.get(True), 'no triggers'
+                  print(f'ok   {f.name}')
+              except Exception as e:
+                  print(f'FAIL {f.name}: {e}', file=sys.stderr)
+                  bad += 1
+          sys.exit(1 if bad else 0)
+          EOF
+
+      # Every agent runs as `go -C tools/<name> run .`, so a path relative to
+      # the repository root silently resolves to nothing. That bug shipped
+      # twice -- the Orchestrator digest and every Reliability alert were built
+      # and discarded, both with green runs -- so the shape is banned outright
+      # rather than fixed twice and forgotten.
+      - name: no repo-root-relative paths inside a tool
+        run: |
+          if grep -rn 'exec.Command("python3", "tools/' tools/ --include='*.go'; then
+            echo
+            echo 'A tool ran a script by a path relative to the repository root.'
+            echo 'The working directory is the TOOL. Use notifyScript(), which'
+            echo 'walks up to find it. See tools/orchestratorctl/main.go.'
+            exit 1
+          fi
+          echo "no repo-root-relative script paths"
+
+      - name: build and test every tool module
+        run: |
+          fail=0
+          for mod in $(find tools -name go.mod -maxdepth 3 | sort); do
+            dir=$(dirname "$mod")
+            echo "::group::$dir"
+            ( cd "$dir" \
+              && test -z "$(gofmt -l .)" || { echo "not gofmt'd: $(gofmt -l .)"; exit 1; } ) || fail=1
+            ( cd "$dir" && go vet ./... && go build ./... && go test ./... -count=1 ) || fail=1
+            echo "::endgroup::"
+          done
+          exit $fail
+
+  publisher:
+    name: publisher (browser)
+    runs-on: ubuntu-latest
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # ubuntu-latest ships Chrome, but pinning the action makes the version
+      # explicit rather than whatever the image happens to carry this month.
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+        with:
+          chrome-version: stable
+      - name: syntax check every game module
+        run: |
+          for f in apps/publisher/static/*.js; do
+            node --check "$f" || exit 1
+          done
+      - name: make test-site
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: python3 tools/test/site_check.py

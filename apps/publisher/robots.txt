@@ -1,0 +1,36 @@
+# Everything here is public and free to play. There is nothing to protect by
+# hiding it, and discovery is the single biggest constraint on this site.
+User-agent: *
+Allow: /
+
+# Assistant crawlers are named explicitly rather than left to the wildcard,
+# because allowing them is a deliberate product decision and not an oversight.
+# A growing share of people find things by asking an assistant; a site these
+# cannot read is invisible to that audience.
+#
+# They are also NOT billable traffic -- that is handled in the ad server, not
+# here. Blocking a crawler to avoid billing problems trades away discovery to
+# solve a problem that belongs at a different layer.
+# See docs/traffic-filtering.md.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://xoxoxo.live/sitemap.xml

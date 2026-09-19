@@ -1,0 +1,81 @@
+name: Deploy publisher
+
+# Deploying should not depend on a human holding a valid AWS session.
+# Interactive `aws login` tokens are short-lived, so any deploy that needs one
+# is a deploy that fails at the wrong moment.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/publisher/**'
+      - 'tools/build/**'
+      - '.github/workflows/deploy-publisher.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-publisher
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write   # required to request the OIDC token
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CI: 'true'
+      SITE_BUCKET: adtech-lab-publisher-${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_REGION: us-east-1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+        with:
+          chrome-version: stable
+
+      # The site is tested before it is published, not after. This is the whole
+      # reason the deploy lives in CI rather than on a laptop.
+      - name: make test-site
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: python3 tools/test/site_check.py
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # Two passes, in this order, and the order matters. `aws s3 sync` skips
+      # unchanged files and therefore never applies their metadata -- so a
+      # single pass leaves hashed assets on the short TTL. Assets are
+      # content-hashed, so immutable caching is safe for them and only for them.
+      - name: publish hashed assets (immutable)
+        run: |
+          aws s3 sync apps/publisher/build/static/ "s3://$SITE_BUCKET/static/" \
+            --cache-control "public,max-age=31536000,immutable"
+
+      - name: publish HTML (short TTL)
+        run: |
+          aws s3 sync apps/publisher/build/ "s3://$SITE_BUCKET/" \
+            --exclude "static/*" --delete \
+            --cache-control "public,max-age=300"
+
+      - name: invalidate HTML
+        run: |
+          id=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Aliases.Items[0]=='xoxoxo.live'].Id | [0]" \
+            --output text)
+          aws cloudfront create-invalidation --distribution-id "$id" --paths "/*" >/dev/null
+          echo "invalidated $id"
+
+      - name: verify the live site
+        run: |
+          for p in / /xo/ /connect-four/ /snake/ /2048/; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://xoxoxo.live$p")
+            echo "  $p -> $code"
+            [ "$code" = "200" ] || exit 1
+          done

@@ -1,0 +1,24 @@
+# ads.txt — Authorized Digital Sellers (IAB Tech Lab spec v1.1)
+#
+# This file answers ONE question, asked by a buyer: "is the system offering me
+# this inventory actually allowed to sell it?" Every entry is a statement by
+# this Publisher that a named system may sell xoxoxo.live inventory, and a
+# false entry is a false statement to every buyer that reads it.
+#
+# Format: <advertising system domain>, <seller account id>, <DIRECT|RESELLER>[, <certification id>]
+#
+# DIRECT means the named system is operated by, or under direct contract with,
+# the owner of this inventory. That is the case here in the strongest sense:
+# xoxoxo.live and the ad server selling it are the same entity. This is an
+# owned-and-operated setup, so there is no reseller in the chain and no
+# certification authority id to cite.
+#
+# The seller account id below MUST match a seller_id in
+# https://xoxoxo.live/sellers.json, and the schain node our ad server sends
+# MUST use the same pair. Those three artefacts agreeing is the entire point --
+# see docs/supply-chain.md. tools/supplychain verifies it the way a buyer would.
+
+xoxoxo.live, xoxoxo-1, DIRECT
+
+# Assistant and search crawlers read this file too; nothing here is sensitive.
+CONTACT=litansh@gmail.com

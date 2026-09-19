@@ -1,0 +1,15 @@
+{
+  "_comment": "AWS us-east-1 list prices, 2026-08. List prices on purpose: free-tier allowances and rounding are NOT modelled, so attributed cost is an underestimate. Correct these here, never in code.",
+  "lambda_gb_second_usd": 0.0000166667,
+  "lambda_request_usd": 0.0000002,
+  "lambda_memory_mb": 512,
+  "apigw_request_usd": 0.000001,
+  "dynamodb_write_unit_usd": 0.000000625,
+  "s3_put_usd": 0.000005,
+  "s3_gb_month_usd": 0.023,
+  "cloudfront_request_usd": 0.0000012,
+  "cloudfront_gb_egress_usd": 0.085,
+  "buyer_call_egress_kb": 4.0,
+  "avg_event_bytes": 700,
+  "avg_response_bytes": 900
+}

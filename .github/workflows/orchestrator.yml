@@ -1,0 +1,178 @@
+name: Orchestrator
+
+# The agent that manages the other agents, and the plan they sit inside.
+#
+# It runs every morning and answers one question: what is the single next thing
+# worth doing. That answer goes to Telegram, not to a pull request body -- a
+# pull request is where a CHANGE gets reviewed, and most mornings there is no
+# change, only a decision about where to spend an hour.
+#
+# It writes nothing except state/orchestrator-last.json, which exists solely so
+# it does not send the same message every day.
+on:
+  schedule:
+    # 09:00 in Israel, all year -- attempted hourly, because GitHub's scheduler
+    # is not a scheduler so much as a suggestion.
+    #
+    # Two problems stack. GitHub only speaks UTC, and Israel is UTC+3 in summer
+    # and UTC+2 in winter, so a fixed slot drifts an hour every October. And
+    # scheduled workflows on a private repository are queued at low priority:
+    # on the first real morning, the nightly report ran 5h56m late, agent
+    # proposals 5h28m late, and the briefing's two slots had not run at all by
+    # 10:24 UTC. Two fixed slots cannot survive that, and the failure looks
+    # exactly like a dead agent.
+    #
+    # So the morning is attempted every hour from 06:00 to 13:00 UTC, and the
+    # job decides. The gate is "not before 09:00 local" with NO upper bound: a
+    # late briefing is worth having, a missing one is not. The first attempt
+    # that actually executes on or after 09:00 sends; the rest cost a few
+    # seconds each because the clock is checked before anything is checked out.
+    #
+    # Sending once per day is enforced twice -- here, from the committed record,
+    # so a redundant attempt does no work at all; and in the tool, which is the
+    # authority. Belt and braces, because the cheap check reads a file that a
+    # slow push may not have updated yet.
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 9 * * *'
+    - cron: '0 10 * * *'
+    - cron: '0 11 * * *'
+    - cron: '0 12 * * *'
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Send to Telegram even if nothing has changed'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write     # to record what was last sent
+  pull-requests: read # to see what the fleet is waiting on
+  issues: write       # to escalate an agent that a retry did not fix
+  actions: write      # to see whether the other agents ran, AND to retry one
+  id-token: write
+
+concurrency:
+  group: orchestrator
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      # Before the checkout, deliberately: an attempt that is not needed should
+      # cost seconds, not a build. Eight attempts a day on a metered private
+      # repository is only reasonable if seven of them are nearly free.
+      - name: is it morning in Israel, and has today's briefing gone out?
+        id: when
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          hour=$(TZ=Asia/Jerusalem date +%-H)
+          today=$(date -u +%Y-%m-%d)
+          echo "it is ${hour}:00 in Israel; today is $today (UTC)"
+
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+            echo "manual run — proceeding regardless"
+            exit 0
+          fi
+
+          if [ "$hour" -lt 9 ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"
+            echo "too early — a later attempt covers this"
+            exit 0
+          fi
+
+          # Read the committed record without checking anything out.
+          sent=$(gh api "repos/${{ github.repository }}/contents/state/orchestrator-last.json" \
+                   --jq '.content' 2>/dev/null | base64 -d 2>/dev/null \
+                 | grep -o '"sent_at": *"[^"]*"' | cut -d'"' -f4 | cut -dT -f1) || sent=""
+          if [ "$sent" = "$today" ]; then
+            echo "go=no" >> "$GITHUB_OUTPUT"
+            echo "today's briefing already went out — nothing to do"
+          else
+            echo "go=yes" >> "$GITHUB_OUTPUT"
+            echo "last briefing was ${sent:-never} — sending"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.when.outputs.go == 'yes'
+      - uses: actions/setup-go@v5
+        if: steps.when.outputs.go == 'yes'
+        with:
+          go-version: '1.23'
+      - uses: actions/setup-python@v5
+        if: steps.when.outputs.go == 'yes'
+        with:
+          python-version: '3.12'
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        if: steps.when.outputs.go == 'yes'
+        with:
+          role-to-assume: ${{ secrets.AWS_REPORT_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: fetch the last seven days of events
+        if: steps.when.outputs.go == 'yes'
+        run: |
+          mkdir -p /tmp/events
+          for i in 1 2 3 4 5 6 7; do
+            day=$(date -u -d "$i days ago" +%Y-%m-%d)
+            aws s3 cp "s3://adtech-lab-events-${{ secrets.AWS_ACCOUNT_ID }}/events/dt=$day/" /tmp/events/ \
+              --recursive --quiet 2>/dev/null || true
+          done
+          echo "fetched $(find /tmp/events -type f | wc -l | tr -d ' ') files"
+
+      - name: decide
+        if: steps.when.outputs.go == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Read-only: every endpoint on itch's server-side API is a GET, and
+          # the key never leaves the process that reads with it.
+          ITCH_API_KEY: ${{ secrets.ITCH_API_KEY }}
+        run: |
+          force=""
+          [ "${{ github.event.inputs.force }}" = "true" ] && force="--force"
+          go -C tools/orchestratorctl run . next \
+            --state ../../state/plan.json \
+            --last ../../state/orchestrator-last.json \
+            --events '/tmp/events/*.ndjson*' \
+            --telegram --act $force | tee /tmp/orchestrator.txt
+
+      # ROADMAP.md and state/progress.json are regenerated on every run, so
+      # committing them is what makes the roadmap move on its own. The commit
+      # message names the achievement when there is one, so `git log ROADMAP.md`
+      # reads as a history of the project rather than a list of timestamps.
+      - name: commit the roadmap and what was sent
+        if: steps.when.outputs.go == 'yes'
+        run: |
+          git config user.name  "${{ vars.COMMIT_AUTHOR_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.COMMIT_AUTHOR_EMAIL || '41898282+github-actions[bot]@users.noreply.github.com' }}"
+          git add ROADMAP.md state/progress.json state/orchestrator-last.json state/itch-history.json state/fleet-health.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+
+          done_line=$(grep -m1 '^DONE ' /tmp/orchestrator.txt 2>/dev/null | sed 's/^DONE *//')
+          if [ -n "$done_line" ]; then
+            git commit -m "Step complete: $done_line" \
+                       -m "Recorded by the Orchestrator. ROADMAP.md is regenerated on every run."
+          else
+            git commit -m "Orchestrator: roadmap as of $(date -u +%Y-%m-%d)"
+          fi
+          # Rebase and retry: five workflows commit to main, and two that
+          # overlap lose a race. The Orchestrator detected an achievement,
+          # committed it, and had the push rejected because the Fleet agent
+          # pushed a proposal record a second earlier -- so the work was done,
+          # the messages were sent, and the commit evaporated.
+          #
+          # These are append-only state files written by different agents, so a
+          # rebase is always safe here: nothing they touch overlaps.
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash -q origin main || true
+            git push && break
+            echo "push rejected, retrying ($attempt)"; sleep 5
+          done

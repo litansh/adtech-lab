@@ -1,0 +1,16 @@
+{
+  "$comment": "sellers.json (IAB Tech Lab spec v1.0) -- the counterpart to ads.txt. ads.txt is published by the PUBLISHER and says who may sell its inventory; sellers.json is published by the ADVERTISING SYSTEM and says who its sellers are. A buyer joins them: it takes the schain node's asi, fetches that domain's sellers.json, finds the sid, reads the seller's domain, then fetches THAT domain's ads.txt and checks the pair is authorised. Either file alone proves nothing.",
+  "$simplification": "In a normal deployment the advertising system has its own domain and serves sellers.json from its root. Here the publisher and the advertising system are the same entity, so both files live on xoxoxo.live. That is legitimate for owned-and-operated inventory and is recorded rather than glossed -- see docs/supply-chain.md.",
+  "version": "1.0",
+  "contact_email": "litansh@gmail.com",
+  "sellers": [
+    {
+      "seller_id": "xoxoxo-1",
+      "name": "The Game Room",
+      "domain": "xoxoxo.live",
+      "seller_type": "PUBLISHER",
+      "is_confidential": 0,
+      "comment": "seller_type PUBLISHER, not INTERMEDIARY: this seller owns the inventory it sells rather than reselling someone else's. Declaring INTERMEDIARY here would tell buyers there is another party upstream, and there is not."
+    }
+  ]
+}

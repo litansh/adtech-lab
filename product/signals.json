@@ -1,0 +1,86 @@
+{
+  "scanned_at": "2026-09-14",
+  "items_read": 231,
+  "min_points": 20,
+  "mechanics": [
+    {
+      "name": "word",
+      "hits": 22,
+      "points": 2641,
+      "we_ship_it": false,
+      "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
+      "link": "https://www.whatsit.today/"
+    },
+    {
+      "name": "multiplayer",
+      "hits": 8,
+      "points": 1688,
+      "we_ship_it": false,
+      "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
+      "link": "https://gamingcouch.com"
+    },
+    {
+      "name": "score-attack",
+      "hits": 9,
+      "points": 725,
+      "we_ship_it": true,
+      "example": "Starfling: A one-tap endless orbital slingshot game in a single HTML file",
+      "link": "https://playstarfling.com"
+    },
+    {
+      "name": "adversarial",
+      "hits": 3,
+      "points": 271,
+      "we_ship_it": true,
+      "example": "Show HN: I made a little puzzle game about a rogue chess knight",
+      "link": "https://knightride.rakhim.org/"
+    },
+    {
+      "name": "deduction",
+      "hits": 8,
+      "points": 172,
+      "we_ship_it": true,
+      "example": "Show HN: Corporate Mind Games – logic puzzles with a sarcastic corporate theme",
+      "link": "https://corporatemindgames.com/"
+    },
+    {
+      "name": "physics",
+      "hits": 2,
+      "points": 0,
+      "we_ship_it": false,
+      "example": "Fool's Metal (Demo version) [Free] [Platformer]",
+      "link": "https://pickled-cactus-games.itch.io/fools-metal-playtest-version"
+    }
+  ],
+  "meta_patterns": [
+    {
+      "name": "daily",
+      "hits": 23,
+      "points": 1618,
+      "we_ship_it": false,
+      "example": "Show HN: Gerrymandle - Daily puzzle game where you redraw electoral districts",
+      "link": "https://gerrymandle.cc/"
+    }
+  ],
+  "gaps": [
+    {
+      "name": "word",
+      "hits": 22,
+      "points": 2641,
+      "we_ship_it": false,
+      "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
+      "link": "https://www.whatsit.today/"
+    },
+    {
+      "name": "multiplayer",
+      "hits": 8,
+      "points": 1688,
+      "we_ship_it": false,
+      "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
+      "link": "https://gamingcouch.com"
+    }
+  ],
+  "sources_unreadable": [
+    "reddit/playmygame: www.reddit.com returned 429"
+  ]
+}

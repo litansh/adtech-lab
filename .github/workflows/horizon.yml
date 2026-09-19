@@ -1,0 +1,108 @@
+name: Horizon
+
+# The research agent. Weekly, because a trend that turns over in less than a
+# week is not a trend, and a research agent that reports daily is one people
+# learn to scroll past.
+#
+# It reads public JSON APIs and RSS feeds, counts what it finds against a fixed
+# dictionary, and opens a pull request when the numbers move. It never
+# interprets: titles from the open web are untrusted input, and counting is the
+# only operation on untrusted input that its contents cannot steer.
+on:
+  schedule:
+    - cron: '20 5 * * 1'   # Monday, before the Orchestrator's morning digest
+  workflow_dispatch:
+    inputs:
+      min_points:
+        description: 'Ignore stories below this score'
+        default: '20'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: horizon
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: scan
+        id: scan
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          min="${{ github.event.inputs.min_points }}"; [ -n "$min" ] || min=20
+          go -C tools/horizonctl run . scan \
+            --landscape ../../product/landscape.json \
+            --out ../../product/signals.json \
+            --min-points "$min" | tee /tmp/horizon.txt
+
+      - name: rank what we could build against it
+        run: go -C tools/productctl run . benchmark --landscape ../../product/landscape.json | tee /tmp/bench.txt
+
+      - name: open a pull request if the picture changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # scanned_at changes every run, so a diff in that line alone is not a
+          # finding. Compare everything else, or this opens a pull request every
+          # Monday forever and stops being read.
+          if git diff --quiet -- product/signals.json; then
+            echo "no change at all"; exit 0
+          fi
+          if [ -z "$(git diff -U0 -- product/signals.json | grep '^[+-]' \
+                     | grep -v '^[+-][+-]' | grep -v 'scanned_at')" ]; then
+            echo "only the scan date moved — nothing worth a pull request"
+            git checkout -- product/signals.json
+            exit 0
+          fi
+
+          day=$(date -u +%Y-%m-%d)
+          branch="agent/horizon-$day"
+          git config user.name  "${{ vars.COMMIT_AUTHOR_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.COMMIT_AUTHOR_EMAIL || '41898282+github-actions[bot]@users.noreply.github.com' }}"
+          git checkout -b "$branch"
+          git add product/signals.json
+          git commit -m "Horizon: what the outside world is playing ($day)"
+          git push -u origin "$branch"
+          {
+            echo "Weekly scan of public feeds. **Nothing here was interpreted** — these are"
+            echo "keyword counts against a fixed dictionary, and the quoted titles are raw."
+            echo
+            echo '```'
+            cat /tmp/horizon.txt
+            echo '```'
+            echo
+            echo "### Ranked against what we could build"
+            echo
+            echo '```'
+            cat /tmp/bench.txt
+            echo '```'
+            echo
+            echo "### Before merging"
+            echo
+            echo "- Horizon proposes **saturation** only. Retention and fit are judgements"
+            echo "  about our product and stay with a human — an agent inventing them would"
+            echo "  be making product decisions nobody reviewed."
+            echo "- A gap is measured against \`portfolio\` in \`product/landscape.json\`. If we"
+            echo "  ship something it does not know about, fix the portfolio, not the scan."
+          } > /tmp/body.md
+          url=$(gh pr create --title "Horizon: what the outside world is playing ($day)" \
+                             --body-file /tmp/body.md --label agent)
+          python3 tools/notify/telegram.py \
+            --title "Horizon: the weekly scan moved" \
+            --body-file /tmp/horizon.txt --url "$url" || true

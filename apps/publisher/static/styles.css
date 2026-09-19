@@ -1,0 +1,1159 @@
+  :root{
+    /* Self-contained font stacks. No third-party font request: loading Google
+       Fonts would send every visitor's IP to a third party, which conflicts
+       with docs/privacy-baseline.md. Self-hosting WOFF2 is the upgrade path. */
+    --font-display: ui-rounded, "SF Pro Rounded", "Segoe UI Rounded", "Trebuchet MS", system-ui, sans-serif;
+    --font-body: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --bg:#EEF0FF;
+    --bg-glow:#DDE2FF;
+    --surface:#FFFFFF;
+    --surface-2:#E6EAFF;
+    --ink:#23244A;
+    --ink-soft:#63668F;
+    --line:#C7CDF2;
+    --x:#F2622E;
+    --o:#0FAE9A;
+    --gold:#FFB627;
+    --red:#E8434F;
+    --yellow:#F2B705;
+    --frame:#4A4FA8;
+    --frame-2:#3C4090;
+    --shadow:35 36 74;
+    --lift:0 6px 0 rgb(var(--shadow) / .14);
+    --lift-lg:0 12px 30px rgb(var(--shadow) / .16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14152B;
+      --bg-glow:#1D1F3E;
+      --surface:#212349;
+      --surface-2:#2B2E60;
+      --ink:#EEF0FF;
+      --ink-soft:#9AA0D4;
+      --line:#3B3F7C;
+      --x:#FF8455;
+      --o:#2BD9C1;
+      --gold:#FFD166;
+      --red:#FF6B72;
+      --yellow:#FFCE3D;
+      --frame:#343879;
+      --frame-2:#2A2D63;
+      --shadow:0 0 0;
+      --lift:0 6px 0 rgb(var(--shadow) / .5);
+      --lift-lg:0 12px 30px rgb(var(--shadow) / .5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14152B;
+    --bg-glow:#1D1F3E;
+    --surface:#212349;
+    --surface-2:#2B2E60;
+    --ink:#EEF0FF;
+    --ink-soft:#9AA0D4;
+    --line:#3B3F7C;
+    --x:#FF8455;
+    --o:#2BD9C1;
+    --gold:#FFD166;
+    --red:#FF6B72;
+    --yellow:#FFCE3D;
+    --frame:#343879;
+    --frame-2:#2A2D63;
+    --shadow:0 0 0;
+    --lift:0 6px 0 rgb(var(--shadow) / .5);
+    --lift-lg:0 12px 30px rgb(var(--shadow) / .5);
+  }
+
+  *{box-sizing:border-box}
+  html{direction:ltr}
+  body{
+    margin:0;
+    min-height:100dvh;
+    background:
+      radial-gradient(120% 80% at 50% -10%, var(--bg-glow) 0%, var(--bg) 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:clamp(10px,2vw,18px) 16px 40px;
+    gap:clamp(10px,1.6vw,16px);
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ---------- Top bar + game switcher ---------- */
+  /* One row, not three. The board has to be visible without scrolling -- landing
+     on a header instead of a game is the fastest way to lose a casual player. */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;width:100%;max-width:900px;margin:0 auto;
+    flex-wrap:wrap;
+  }
+  .topbar .brand{order:1;flex:0 0 auto}
+  .topbar .tabs{order:2;flex:1 1 auto;justify-content:center}
+  .topbar .group{order:3;flex:0 0 auto}
+  @media (max-width:640px){
+    .topbar{gap:6px}
+    .topbar .tabs{order:3;flex:1 0 100%;margin-top:2px}
+    .topbar .group{order:2}
+  }
+  .brand a{color:inherit;text-decoration:none}
+  .brand{
+    font-family:var(--font-display);
+    font-size:clamp(15px,3.4vw,18px);
+    letter-spacing:.14em;
+    color:var(--ink-soft);
+    margin:0;
+    text-transform:none;
+  }
+  .tabs{
+    display:flex;
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:5px;
+    gap:5px;
+    box-shadow:var(--lift);
+  }
+  .tab{
+    font:inherit;
+    text-decoration:none;
+    font-size:clamp(15px,3.6vw,17px);
+    display:flex;align-items:center;gap:9px;
+    color:var(--ink-soft);
+    background:transparent;
+    border:0;
+    border-radius:999px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:background .2s ease,color .2s ease,transform .12s ease;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab:active{transform:scale(.96)}
+  .tab[aria-selected="true"],
+  .tab[aria-current="page"]{background:var(--ink);color:var(--bg)}
+  .tab .lbl-short{display:none}
+  .tab .ico{display:flex;gap:4px;align-items:center}
+  .tab .ico svg{width:17px;height:17px;display:block}
+  .tab .dot{width:13px;height:13px;border-radius:50%;display:block}
+  .tab .dot.r{background:var(--red)}
+  .tab .dot.y{background:var(--yellow)}
+
+  .panel{display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.8vw,18px);width:100%}
+  .panel[hidden]{display:none}
+
+  header{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+  /* The tagline is charm, not information. It should never cost the board its
+     place above the fold, so it disappears on short screens. */
+  @media (max-height:820px){ .tagline{display:none} }
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(28px,6vw,44px);
+    line-height:1;
+    margin:0;
+    letter-spacing:.01em;
+    text-wrap:balance;
+  }
+  h1 .mx{color:var(--x)}
+  h1 .mo{color:var(--o)}
+  h1 .mr{color:var(--red)}
+  h1 .my{color:var(--yellow)}
+  .tagline{margin:0;color:var(--ink-soft);font-size:clamp(14px,3.2vw,17px)}
+
+  /* ---------- Control rows ---------- */
+  .controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;max-width:520px}
+  .group{
+    display:flex;
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:4px;
+    gap:4px;
+    box-shadow:var(--lift);
+  }
+  .chip{
+    font:inherit;
+    font-size:15px;
+    color:var(--ink-soft);
+    background:transparent;
+    border:0;
+    border-radius:999px;
+    padding:9px 16px;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,transform .12s ease;
+  }
+  .chip:hover{color:var(--ink)}
+  .chip:active{transform:scale(.95)}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+  .chip:focus-visible,.btn:focus-visible,.cell:focus-visible,.name:focus-visible,.tab:focus-visible,.col:focus-visible{
+    outline:3px solid var(--gold);outline-offset:3px;
+  }
+  .levels[hidden]{display:none}
+
+  /* ---------- Status row ---------- */
+  .status{
+    display:flex;align-items:center;gap:12px;
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:10px 20px 10px 14px;
+    box-shadow:var(--lift);
+    min-height:56px;
+    font-size:clamp(17px,4vw,21px);
+    transition:border-color .25s ease;
+  }
+  .status[data-turn="X"]{border-color:var(--x)}
+  .status[data-turn="O"]{border-color:var(--o)}
+  .status[data-turn="R"]{border-color:var(--red)}
+  .status[data-turn="Y"]{border-color:var(--yellow)}
+  .status.over{border-color:var(--gold)}
+  .status .pip{width:26px;height:26px;flex:none}
+  .status .pip svg{width:100%;height:100%;display:block}
+  .status .pip .puck{width:24px;height:24px;border-radius:50%;display:block}
+
+  /* ---------- Tic-Tac-Toe board ---------- */
+  .board-wrap{
+    position:relative;
+    width:min(88vw, 420px, calc((100dvh - var(--chrome)) * 1));
+    aspect-ratio:1;
+    direction:ltr;
+    perspective:900px;
+  }
+  .board{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:clamp(8px,2.2vw,14px);
+    width:100%;height:100%;
+    transform-style:preserve-3d;
+    transition:transform .3s ease;
+  }
+  .cell{
+    position:relative;
+    border:2px solid var(--line);
+    background:var(--surface);
+    border-radius:clamp(14px,4vw,22px);
+    box-shadow:var(--lift);
+    padding:0;
+    cursor:pointer;
+    display:grid;place-items:center;
+    transition:transform .14s cubic-bezier(.34,1.56,.64,1),box-shadow .14s ease,background .2s ease,border-color .2s ease;
+  }
+  .cell:disabled{cursor:default}
+  .cell:not(:disabled):hover{transform:translateY(-3px);box-shadow:0 9px 0 rgb(var(--shadow) / .16)}
+  .cell:not(:disabled):active{transform:translateY(3px);box-shadow:0 2px 0 rgb(var(--shadow) / .16)}
+  .cell.ghost::after{
+    content:"";
+    position:absolute;inset:32%;
+    border-radius:50%;
+    background:currentColor;
+    opacity:0;
+    transition:opacity .2s ease;
+  }
+  .cell.ghost:not(:disabled):hover::after{opacity:.13}
+  .cell[data-ghost="X"]{color:var(--x)}
+  .cell[data-ghost="O"]{color:var(--o)}
+  .cell.win{background:var(--surface-2);border-color:var(--gold);animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+  .cell svg{width:64%;height:64%;display:block}
+  .mark{
+    fill:none;
+    stroke-width:11;
+    stroke-linecap:round;
+    stroke-dasharray:100;
+    stroke-dashoffset:100;
+    animation:draw .34s ease forwards;
+  }
+  .mark.x{stroke:var(--x)}
+  .mark.o{stroke:var(--o)}
+  .mark.d2{animation-delay:.16s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+  .strike{position:absolute;inset:0;pointer-events:none;width:100%;height:100%}
+  .strike line{
+    stroke:var(--gold);
+    stroke-width:5.5;
+    stroke-linecap:round;
+    stroke-dasharray:100;
+    stroke-dashoffset:100;
+    animation:draw .45s .12s ease forwards;
+  }
+
+  /* ---------- Connect Four board ---------- */
+  .c4-frame{
+    position:relative;
+    direction:ltr;
+    width:min(92vw, 470px, calc((100dvh - var(--chrome)) * 7 / 6));
+    background:linear-gradient(180deg, var(--frame) 0%, var(--frame-2) 100%);
+    border-radius:clamp(16px,4vw,26px);
+    padding:clamp(8px,2.4vw,14px);
+    box-shadow:0 10px 0 rgb(var(--shadow) / .22), var(--lift-lg);
+    overflow:hidden;
+  }
+  .c4-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:clamp(5px,1.6vw,10px);
+  }
+  .hole{
+    position:relative;
+    aspect-ratio:1;
+    border-radius:50%;
+    background:var(--bg);
+    box-shadow:inset 0 3px 0 rgb(var(--shadow) / .18), inset 0 -2px 0 rgb(255 255 255 / .06);
+  }
+  .hole::after{
+    content:"";
+    position:absolute;inset:11%;
+    border-radius:50%;
+    background:currentColor;
+    opacity:0;
+    transition:opacity .18s ease;
+  }
+  .hole.preview::after{opacity:.3}
+  .hole[data-ghost="R"]{color:var(--red)}
+  .hole[data-ghost="Y"]{color:var(--yellow)}
+  .disc{
+    position:absolute;inset:5%;
+    border-radius:50%;
+    animation:drop .42s cubic-bezier(.3,1.22,.55,1);
+    box-shadow:inset 0 -4px 0 rgb(var(--shadow) / .22), inset 0 4px 0 rgb(255 255 255 / .28);
+  }
+  .disc.r{background:var(--red)}
+  .disc.y{background:var(--yellow)}
+  .disc.win{
+    box-shadow:0 0 0 4px var(--gold), inset 0 -4px 0 rgb(var(--shadow) / .22);
+    animation:pop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes drop{from{transform:translateY(var(--from,-360px))}to{transform:translateY(0)}}
+  .c4-cols{
+    position:absolute;inset:0;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:clamp(5px,1.6vw,10px);
+    padding:clamp(8px,2.4vw,14px);
+  }
+  .col{
+    border:0;padding:0;
+    background:transparent;
+    border-radius:clamp(10px,3vw,16px);
+    cursor:pointer;
+    transition:background .18s ease;
+  }
+  .col:disabled{cursor:default}
+  .col:not(:disabled):hover{background:rgb(255 255 255 / .1)}
+  .col:not(:disabled):active{background:rgb(255 255 255 / .16)}
+
+  /* ---------- Scoreboard ---------- */
+  .scores{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    width:min(92vw,470px);
+  }
+  .score{
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:18px;
+    padding:12px 8px 14px;
+    text-align:center;
+    box-shadow:var(--lift);
+    transition:border-color .25s ease,transform .25s ease;
+  }
+  .score.active{transform:translateY(-4px)}
+  .score.x.active{border-color:var(--x)}
+  .score.o.active{border-color:var(--o)}
+  .score.r.active{border-color:var(--red)}
+  .score.y.active{border-color:var(--yellow)}
+  .name{
+    font:inherit;font-size:15px;
+    width:100%;
+    text-align:center;
+    background:transparent;
+    border:0;
+    border-bottom:2px dashed transparent;
+    color:var(--ink-soft);
+    padding:2px 0;
+    border-radius:4px;
+  }
+  .name:hover{border-bottom-color:var(--line)}
+  .name:focus{outline:none;border-bottom-color:var(--gold);color:var(--ink)}
+  .name:disabled{color:var(--ink-soft);opacity:1}
+  .score.x .num{color:var(--x)}
+  .score.o .num{color:var(--o)}
+  .score.r .num{color:var(--red)}
+  .score.y .num{color:var(--yellow)}
+  .num{
+    font-family:"Rubik",system-ui,sans-serif;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    font-size:clamp(26px,7vw,34px);
+    line-height:1.15;
+    display:block;
+  }
+  .score.tie .num{color:var(--ink-soft)}
+  .score .cap{font-size:12px;letter-spacing:.06em;color:var(--ink-soft);display:block;margin-top:2px}
+
+  /* ---------- Buttons ---------- */
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    font:inherit;font-size:16px;
+    text-decoration:none;
+    display:inline-block;
+    text-align:center;
+    padding:12px 22px;
+    border-radius:999px;
+    border:2px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    cursor:pointer;
+    box-shadow:var(--lift);
+    transition:transform .12s ease,box-shadow .12s ease,background .2s ease;
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgb(var(--shadow) / .14)}
+  .btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:9}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+    .mark,.strike line{stroke-dashoffset:0}
+  }
+
+/* ---------- Ad placement ----------
+   Below the game, never overlapping it. Collapses entirely when no ad is
+   returned, so the product is unaffected by the ad server. */
+/* An unfilled slot is INVISIBLE but still laid out.
+   display:none would be simpler and is what this had -- and it deadlocks the
+   lazy request: IntersectionObserver never fires for a display:none element,
+   so the ad is never requested, so the slot never fills, so it stays
+   display:none. The slot has to be observable before it can be filled.
+   width/height 0 with visibility hidden keeps it in the layout tree, takes no
+   space, and shows nothing. */
+.ad-slot{
+  display:block;
+  visibility:hidden;
+  margin:0 auto;
+  padding:0;
+  width:0;height:0;
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--surface);
+  box-shadow:none;
+}
+.ad-slot[data-filled="1"]{
+  visibility:visible;
+  margin:clamp(18px,3vw,28px) auto 0;
+  width:300px;height:250px;
+  box-shadow:var(--lift);
+}
+.ad-slot iframe{display:block;width:300px;height:250px;border:0}
+.ad-label{
+  display:none;
+  margin:6px auto 0;text-align:center;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.ad-slot[data-filled="1"] + .ad-label{display:block}
+
+/* ---------- Site footer ---------- */
+.site-foot{
+  margin-top:clamp(24px,4vw,40px);
+  text-align:center;font-size:.85rem;color:var(--ink-soft);
+}
+.site-foot a{color:inherit}
+
+/* ---------- Prose pages (privacy) ---------- */
+.prose{max-width:64ch;text-align:left;align-items:stretch}
+.prose section{margin-top:clamp(18px,3vw,28px)}
+.prose h2{font-family:var(--font-display);font-size:1.15rem;margin:0 0 8px;color:var(--ink)}
+.prose p{margin:0;line-height:1.65;color:var(--ink-soft)}
+.prose strong{color:var(--ink)}
+.privacy-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.92rem}
+.privacy-table th,.privacy-table td{
+  text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);
+  color:var(--ink-soft);vertical-align:top;
+}
+.privacy-table th{color:var(--ink);font-weight:600}
+.privacy-table small{opacity:.8}
+
+/* ---------- Snake ---------- */
+.snake-wrap{
+  width:min(92vw, 520px, calc(100dvh - var(--chrome)));
+  aspect-ratio:1;
+  padding:clamp(8px,1.6vw,14px);
+  border-radius:22px;
+  background:var(--frame);
+  box-shadow:var(--lift-lg), inset 0 -6px 0 var(--frame-2);
+}
+#snake{
+  display:block;width:100%;height:100%;
+  border-radius:14px;
+  background:var(--bg);
+  touch-action:none;            /* swipes steer the snake, they do not scroll */
+}
+.sn-stats{
+  display:flex;gap:clamp(10px,2vw,18px);flex-wrap:wrap;justify-content:center;
+}
+.sn-stat{
+  min-width:104px;padding:12px 18px;border-radius:18px;
+  background:var(--surface);border:2px solid var(--line);
+  box-shadow:var(--lift);text-align:center;
+}
+.sn-stat .num{
+  display:block;font-family:var(--font-display);
+  font-size:clamp(22px,4.4vw,30px);color:var(--ink);line-height:1.1;
+}
+.sn-stat .cap{
+  display:block;font-size:.76rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-soft);margin-top:2px;
+}
+.sn-stat.best .num{color:var(--gold)}
+.sn-hint{color:var(--ink-soft);font-size:.9rem;margin:0}
+
+/* ---------- Home: game cards ----------
+   Three identical buttons told a visitor nothing about three different games.
+   A card shows what each one IS before they commit a click. */
+.game-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+  gap:clamp(12px,2vw,18px);
+  width:min(100%, 880px);
+}
+.game-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  padding:clamp(16px,2.4vw,22px);
+  border-radius:22px;
+  background:var(--surface);
+  border:2px solid var(--line);
+  box-shadow:var(--lift);
+  text-decoration:none;color:inherit;
+  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.game-card:hover,.game-card:focus-visible{
+  transform:translateY(-3px);
+  box-shadow:var(--lift-lg);
+  border-color:var(--ink-soft);
+}
+.game-card:active{transform:translateY(1px)}
+.gc-art{width:56px;height:56px;display:block;margin-bottom:2px}
+.gc-art svg{width:100%;height:100%;display:block}
+.gc-name{font-family:var(--font-display);font-size:1.18rem;color:var(--ink)}
+.gc-desc{font-size:.92rem;line-height:1.45;color:var(--ink-soft)}
+.gc-meta{
+  margin-top:auto;padding-top:8px;
+  font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);opacity:.8;
+}
+
+/* An honest note, not an apology: the unbeatable level says so up front. */
+.level-hint{
+  margin:0;max-width:44ch;text-align:center;
+  font-size:.86rem;line-height:1.45;color:var(--ink-soft);
+}
+.level-hint[hidden]{display:none}
+
+/* ---------- 2048 ----------
+   DOM tiles positioned by CSS custom properties, so a move is a transform
+   transition rather than a repaint. That slide is the entire feel of the game. */
+.tf-wrap{
+  --n:4;
+  --gapc:clamp(6px,1.4vw,10px);
+  position:relative;
+  width:min(88vw, 420px, calc(100dvh - var(--chrome)));
+  aspect-ratio:1;
+  padding:var(--gapc);
+  border-radius:20px;
+  background:var(--frame);
+  box-shadow:var(--lift-lg), inset 0 -6px 0 var(--frame-2);
+}
+.tf-board{
+  position:relative;width:100%;height:100%;
+  display:grid;
+  grid-template-columns:repeat(var(--n),1fr);
+  grid-template-rows:repeat(var(--n),1fr);
+  gap:var(--gapc);
+  touch-action:none;
+}
+.tf-cell{border-radius:12px;background:rgb(255 255 255 / .10)}
+.tf-tile{
+  position:absolute;
+  width:calc((100% - (var(--n) - 1) * var(--gapc)) / var(--n));
+  height:calc((100% - (var(--n) - 1) * var(--gapc)) / var(--n));
+  transform:translate(
+    calc((100% + var(--gapc)) * var(--c)),
+    calc((100% + var(--gapc)) * var(--r))
+  );
+  transition:transform .13s cubic-bezier(.3,.9,.4,1);
+  display:grid;place-items:center;
+  border-radius:12px;
+  font-family:var(--font-display);
+  font-size:clamp(20px,5.4vw,34px);
+  color:#FFF;
+  user-select:none;
+}
+/* The low tiles are light with dark text, exactly as the original -- players
+   read the board by brightness before they read the numbers. */
+.tf-tile.v2   {background:#EEF0FF;color:var(--ink)}
+.tf-tile.v4   {background:#DDE2FF;color:var(--ink)}
+.tf-tile.v8   {background:#FFC59B;color:var(--ink)}
+.tf-tile.v16  {background:#FFA46B;color:#fff}
+.tf-tile.v32  {background:#FF8455;color:#fff}
+.tf-tile.v64  {background:var(--x);color:#fff}
+.tf-tile.v128 {background:#4ED2C0;color:#fff;font-size:clamp(17px,4.6vw,29px)}
+.tf-tile.v256 {background:#2BC4AE;color:#fff;font-size:clamp(17px,4.6vw,29px)}
+.tf-tile.v512 {background:var(--o);color:#fff;font-size:clamp(17px,4.6vw,29px)}
+.tf-tile.v1024{background:#FFC94D;color:#fff;font-size:clamp(14px,3.8vw,24px)}
+.tf-tile.v2048{background:var(--gold);color:#fff;font-size:clamp(14px,3.8vw,24px);
+               box-shadow:0 0 0 4px rgb(255 182 39 / .35)}
+.tf-tile.vmax {background:var(--ink);color:#fff;font-size:clamp(13px,3.4vw,21px)}
+
+@keyframes tfBorn{from{transform:translate(calc((100% + var(--gapc)) * var(--c)),
+                                           calc((100% + var(--gapc)) * var(--r))) scale(.1);opacity:0}
+                  to{opacity:1}}
+@keyframes tfMerge{0%{scale:1}45%{scale:1.16}100%{scale:1}}
+.tf-tile.born{animation:tfBorn .16s ease-out}
+.tf-tile.merged{animation:tfMerge .18s cubic-bezier(.34,1.56,.64,1)}
+
+.tf-stats{display:flex;gap:clamp(10px,2vw,16px);justify-content:center;flex-wrap:wrap}
+
+
+/* ---------- Fold budget ----------
+   Every board is sized by min(width, viewport-height - chrome). --chrome is the
+   measured height of everything stacked above and below it. Without the height
+   term a square board sized on 92vw is 359px wide on a 390px phone and lands
+   184px below the fold -- which is exactly what shipped.
+   dvh, not vh: on iOS Safari vh is the *expanded* viewport and ignores the
+   address bar, so vh-sized boards are cut off until the user scrolls. */
+/* --chrome is the height of everything stacked around the board. The board is
+   sized min(width-cap, 100dvh - var(--chrome)), so as long as --chrome is at
+   least the real height above the board, the board cannot cross the fold.
+   It must therefore cover the WORST case, not the measured one.
+   Font metrics differ by platform: the same header is 291px on macOS and 348px
+   on Linux, and a value tuned to just pass locally failed in CI on the taller
+   rendering. Being generous here costs a slightly smaller board on short
+   screens and nothing at all on tall ones, because the width cap binds first.
+   Re-run `make test-site` after changing these. */
+/* Derived from MEASURED board tops, not guessed, and one set for every
+   viewport rather than three sets that drifted apart.
+
+   Each value is the page's board top plus ~20px. That is the correct budget
+   because the board is sized min(width-cap, 100dvh - chrome): as long as chrome
+   is at least the top offset, the board cannot cross the fold, and anything
+   larger is board size thrown away. The previous values were padded to survive
+   a topbar that wrapped to three rows on short screens; with that fixed they
+   were leaving 90-200px of slack on every page.
+
+   Re-measure with tools/test/site_check.py before changing any of these. */
+:root{ --chrome: 235px; --chrome-2048: 300px; --chrome-snake: 280px;
+       --chrome-sudoku: 170px; --chrome-memory: 240px; --chrome-daily: 270px; }
+.tf-wrap{ --chrome: var(--chrome-2048); }
+/* Snake carries a progress bar the other games do not, which is worth ~25px.
+   Found by CI refusing to deploy at 539/533px on Linux -- the gate working. */
+.snake-wrap{ --chrome: var(--chrome-snake); }
+
+@media (max-width:640px){
+
+  /* The topbar was wrapping to three rows and eating 157px of a 577px screen.
+     One row: the site name goes, because the selected tab already names the
+     game and the logo links home anyway. */
+  .topbar{flex-wrap:nowrap;gap:8px}
+  .topbar .brand{display:none}
+  .topbar .tabs{order:2;flex:1 1 auto;margin-top:0;min-width:0;
+                justify-content:space-between;padding:3px;gap:1px}
+  .topbar .group{order:3}
+  /* All four names must fit one row without scrolling -- a nav strip clipped
+     mid-word reads as broken. site_check asserts .tabs does not overflow, so
+     a fifth game will fail the test rather than quietly shrink the strip. */
+  /* Icons carry recognition and are worth their width, so they stay on every
+     tab. The LABEL is what gets dropped -- only the current game is named. Four
+     icons plus one label fits a 390px phone comfortably; four icons plus four
+     labels does not. */
+  /* Six games. The standard said a fifth would fail the no-clipping check and
+     that the fix is short labels rather than a smaller font -- so: short
+     labels. "Tic-Tac-Toe" becomes "XO", which the icon already says anyway. */
+  .tab{padding:7px 7px;font-size:12.5px;white-space:nowrap;gap:4px}
+  .tab .lbl{display:none}
+  .tab .lbl-short{display:none}
+  .tab[aria-current="page"] .lbl-short{display:inline}
+  .tab .ico svg{width:17px;height:17px}
+  .tab .dot{width:9px;height:9px}
+  /* The sound control was 111px of a 358px topbar -- nearly a third, for a
+     word the speaker icon already says. Six games need that space more. */
+  .topbar .group .chip .lbl{display:none}
+  .topbar .group .chip{padding:8px 11px}
+
+  /* The h1 repeats the selected tab. On a phone that is 30px of duplication. */
+  .panel > header{display:none}
+
+  .controls{gap:7px}
+  .status{padding-block:7px}
+  .panel{gap:9px}
+}
+
+/* Landscape phones have almost no height at all -- drop everything optional. */
+@media (max-height:480px){
+  :root{ --chrome: 150px; }
+  .panel > header{display:none}
+  .sn-hint,.ad-slot,.ad-label{display:none}
+}
+
+/* ---------- Personal records ----------
+   Hidden until there is something in it. Local to the device: a global
+   leaderboard built on client-reported scores is a leaderboard of whoever
+   edited their score first. See docs/publisher-product.md. */
+.records{
+  width:100%;max-width:520px;margin:clamp(14px,3vw,24px) auto 0;
+  background:var(--surface);border:2px solid var(--line);
+  border-radius:18px;padding:clamp(12px,2.6vw,18px);box-shadow:var(--lift);
+}
+.records-h{
+  font-family:var(--font-display);font-size:clamp(15px,3.4vw,18px);
+  margin:0 0 10px;color:var(--ink);
+}
+.records-t{width:100%;border-collapse:collapse;font-size:clamp(13px,3vw,15px)}
+.records-t th{
+  text-align:left;font-weight:600;color:var(--ink-soft);
+  font-size:clamp(11px,2.4vw,12px);text-transform:uppercase;letter-spacing:.06em;
+  padding:0 6px 7px;border-bottom:2px solid var(--line);
+}
+.records-t th:not(:first-child),.records-t td:not(:first-child){text-align:right;width:22%}
+.records-t td{padding:8px 6px;border-bottom:1px solid var(--line)}
+.records-t tr:last-child td{border-bottom:0}
+.records-note{margin:9px 0 0;color:var(--ink-soft);font-size:clamp(11px,2.4vw,12px)}
+
+/* ---------- Snake levels ----------
+   The bar is the whole mechanic: progress you can SEE is what makes the next
+   apple feel like it is worth something. It sits directly above the board so it
+   is in peripheral vision during play, never requiring a glance away. */
+.sn-bar{
+  /* Exactly the board's width. A bar wider than the board reads as page
+     furniture rather than as part of the game -- which is how it looked the
+     first time, in a screenshot review. */
+  width:min(92vw, 520px, calc(100dvh - var(--chrome-snake)));
+  height:14px;
+  border-radius:999px;
+  /* The track was pale grey on pale lavender and effectively invisible. An
+     empty progress bar has to read as empty-and-present, not as absent. */
+  background:rgb(35 36 74 / .16);
+  border:2px solid var(--frame);
+  overflow:hidden;
+  box-shadow:inset 0 2px 4px rgb(var(--shadow) / .18);
+}
+.sn-bar-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg, var(--o), var(--gold));
+  transition:width .18s cubic-bezier(.3,.9,.4,1);
+}
+.sn-stat.level .num{color:var(--gold)}
+
+/* The level-up moment. Under 400ms on purpose: long enough to register as a
+   reward, short enough not to interrupt the run that earned it. */
+@keyframes snLevelFlash{
+  0%  {box-shadow:var(--lift-lg), inset 0 -6px 0 var(--frame-2), 0 0 0 0 rgb(255 182 39 / .8)}
+  60% {box-shadow:var(--lift-lg), inset 0 -6px 0 var(--frame-2), 0 0 0 14px rgb(255 182 39 / 0)}
+  100%{box-shadow:var(--lift-lg), inset 0 -6px 0 var(--frame-2), 0 0 0 0 rgb(255 182 39 / 0)}
+}
+.snake-wrap.sn-levelup{animation:snLevelFlash .38s ease-out}
+
+.snake-wrap{position:relative}
+.sn-levelpop{
+  position:absolute;
+  top:14%;left:50%;
+  transform:translate(-50%,0) scale(.8);
+  font-family:var(--font-display);
+  font-size:clamp(22px,5.4vw,34px);
+  /* On a dark plate rather than raw on the board. Gold text on a light board,
+     with confetti crossing it, was unreadable at the exact moment it most
+     needed to be read. */
+  color:#FFF;
+  background:rgb(35 36 74 / .92);
+  padding:.35em .8em;
+  border-radius:999px;
+  box-shadow:0 6px 18px rgb(var(--shadow) / .35);
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  z-index:3;
+}
+@keyframes snLevelPop{
+  0%  {opacity:0;transform:translate(-50%,10px) scale(.8)}
+  25% {opacity:1;transform:translate(-50%,-2px) scale(1.06)}
+  75% {opacity:1;transform:translate(-50%,-6px) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-18px) scale(1)}
+}
+.sn-levelpop.show{animation:snLevelPop .95s ease-out}
+
+@media (prefers-reduced-motion: reduce){
+  .snake-wrap.sn-levelup{animation:none}
+  .sn-levelpop.show{animation:none;opacity:1}
+  .sn-bar-fill{transition:none}
+}
+
+/* Anticipation. The bar pulses while the player is still an apple or two away,
+   so the tension arrives before the reward rather than with it. */
+@keyframes snBarNear{
+  0%,100%{filter:brightness(1)   ; box-shadow:0 0 0 0 rgb(255 182 39 / 0)}
+  50%    {filter:brightness(1.25); box-shadow:0 0 10px 1px rgb(255 182 39 / .55)}
+}
+.sn-bar-fill.near{animation:snBarNear .7s ease-in-out infinite}
+
+/* Milestone levels look different from ordinary ones. If level 10 feels like
+   level 2, the ladder has no shape. */
+.sn-levelpop.big{
+  font-size:clamp(26px,6.4vw,42px);
+  color:var(--gold);
+  background:rgb(35 36 74 / .95);
+  box-shadow:0 8px 24px rgb(var(--shadow) / .45), 0 0 0 3px rgb(255 182 39 / .55);
+  letter-spacing:.02em;
+}
+@keyframes snLevelPopBig{
+  0%  {opacity:0;transform:translate(-50%,14px) scale(.6) rotate(-4deg)}
+  20% {opacity:1;transform:translate(-50%,-4px) scale(1.22) rotate(2deg)}
+  45% {opacity:1;transform:translate(-50%,-8px) scale(1.02) rotate(-1deg)}
+  80% {opacity:1;transform:translate(-50%,-12px) scale(1.06)}
+  100%{opacity:0;transform:translate(-50%,-30px) scale(1)}
+}
+.sn-levelpop.show.big{animation:snLevelPopBig 1.25s cubic-bezier(.34,1.4,.5,1)}
+
+@media (prefers-reduced-motion: reduce){
+  .sn-bar-fill.near{animation:none;filter:brightness(1.2)}
+  .sn-levelpop.show.big{animation:none;opacity:1}
+}
+
+/* ---------- Sudoku ---------- */
+.sd-wrap{
+  width:min(92vw, 440px, calc(100dvh - var(--chrome-sudoku)));
+  aspect-ratio:1;
+  padding:6px;
+  border-radius:16px;
+  background:var(--frame);
+  box-shadow:var(--lift-lg), inset 0 -5px 0 var(--frame-2);
+}
+.sd-board{
+  container-type:inline-size;
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  grid-template-rows:repeat(9,1fr);
+  gap:1px;
+  width:100%;height:100%;
+  background:rgb(255 255 255 / .25);
+  border-radius:11px;
+  overflow:hidden;
+}
+.sd-cell{
+  font:inherit;
+  font-family:var(--font-display);
+  /* cqw so the digits scale with the BOARD rather than the viewport: a board
+     shrunk by the height budget must shrink its text too, or the cells refuse
+     to get smaller and the grid stops being square. */
+  font-size:clamp(9px,7cqw,22px);
+  line-height:1;
+  min-width:0;min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);
+  color:var(--x);
+  border:0;
+  cursor:pointer;
+  padding:0;
+  transition:background .12s ease;
+}
+/* The 3x3 box borders. Without them a 9x9 grid is unreadable. */
+.sd-cell.br{box-shadow:inset -2px 0 0 var(--frame)}
+.sd-cell.bb{box-shadow:inset 0 -2px 0 var(--frame)}
+.sd-cell.br.bb{box-shadow:inset -2px 0 0 var(--frame), inset 0 -2px 0 var(--frame)}
+.sd-cell.given{color:var(--ink);font-weight:700}
+.sd-cell.peer{background:#EEF0FF}
+.sd-cell.same{background:#DDE2FF;color:var(--o)}
+.sd-cell.sel{background:var(--gold);color:#FFF}
+.sd-cell.wrong{color:var(--red);background:#FFE9E4}
+.sd-cell:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+
+.sd-pad{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  gap:4px;
+  width:min(92vw, 440px);
+}
+.sd-pad button{
+  font:inherit;font-family:var(--font-display);
+  font-size:clamp(14px,3.6vw,19px);
+  padding:clamp(7px,1.6vw,11px) 0;
+  border-radius:10px;
+  border:2px solid var(--line);
+  background:var(--surface);
+  color:var(--ink);
+  cursor:pointer;
+  box-shadow:var(--lift);
+}
+.sd-pad button:active{transform:scale(.94)}
+.sd-pad .erase{color:var(--red)}
+
+/* ---------- Memory ---------- */
+.mm-wrap{
+  /* The board is ~0.85x as tall as it is wide (rows/cols, square tiles), so the
+     height budget converts to a width budget by dividing. Sizing a non-square
+     board by width alone is the same mistake as sizing one by width alone. */
+  width:min(92vw, 440px, calc((100dvh - var(--chrome-memory)) / 0.9));
+}
+.mm-board{
+  --cols:3;
+  display:grid;
+  grid-template-columns:repeat(var(--cols),1fr);
+  gap:clamp(5px,1.4vw,9px);
+  width:100%;
+}
+.mm-card{
+  /* Square, not card-shaped. Card proportions look better and make the board
+     too tall to fit above the fold, and a board you must scroll to is worse
+     than one with slightly wrong proportions. */
+  aspect-ratio:1;
+  border:0;padding:0;background:none;cursor:pointer;
+  perspective:600px;
+}
+.mm-inner{
+  position:relative;display:block;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .32s cubic-bezier(.3,.9,.4,1);
+}
+.mm-card.up .mm-inner,.mm-card.done .mm-inner{transform:rotateY(180deg)}
+.mm-back,.mm-face{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:12px;
+  backface-visibility:hidden;
+  font-size:clamp(20px,6vw,34px);
+}
+.mm-back{
+  background:linear-gradient(150deg, var(--frame), var(--frame-2));
+  box-shadow:var(--lift), inset 0 -4px 0 rgb(var(--shadow) / .18);
+}
+.mm-face{
+  background:var(--surface);
+  border:2px solid var(--line);
+  transform:rotateY(180deg);
+  box-shadow:var(--lift);
+}
+.mm-card.done .mm-face{opacity:.45}
+.mm-card:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:12px}
+
+@media (prefers-reduced-motion: reduce){
+  .mm-inner{transition:none}
+}
+
+
+/* Sudoku and Memory carry more furniture than the other games -- a number pad,
+   a size selector -- so they drop the h1 on every viewport, not just phones.
+   The selected tab already names the game, and a 9x9 grid needs the pixels
+   more than a title does.
+
+   The budgets below must stay BELOW the viewport height, or calc() goes
+   negative and min() collapses the board to nothing. A 665px budget on a 589px
+   viewport produced a 12px-wide Sudoku board, which is a silent failure that
+   looks like a styling bug. */
+body:has(.sd-wrap) .panel > header,
+body:has(.mm-wrap) .panel > header{display:none}
+
+
+/* Short viewports, at any width. The mobile rules key on WIDTH, so a wide but
+   short window -- a laptop with a small screen, a browser sharing the screen
+   with something else, and the CI runner at 533px of usable height -- kept the
+   h1 and pushed boards below the fold.
+   The title is the first thing to go when vertical space is scarce, because
+   the selected tab already names the game. */
+@media (max-height:700px){
+  .panel > header{display:none}
+  .panel{gap:clamp(8px,1.4vw,12px)}
+
+  /* The nav compacts on SHORT screens too, not only narrow ones. At 1280x560
+     the full labels wrapped the topbar to three rows and took 150px -- more
+     than a quarter of the viewport, on a page whose whole layout problem is
+     vertical space. */
+  .topbar{flex-wrap:nowrap;gap:8px}
+  .topbar .brand{display:none}
+  .topbar .tabs{flex:1 1 auto;min-width:0;justify-content:space-between;padding:3px;gap:1px}
+  /* Matches the narrow-screen values, because a phone matches BOTH
+     blocks and this one comes later. */
+  .tab{padding:7px 7px;font-size:12.5px;gap:4px}
+  /* Short labels here too. Showing the full label on the active tab was
+     wider than the narrow-screen rule it overrode, so a phone -- which matches
+     both blocks -- ended up with a clipped nav. */
+  .tab .lbl{display:none}
+  .tab .lbl-short{display:none}
+  .tab[aria-current="page"] .lbl-short{display:inline}
+  .topbar .group .chip .lbl{display:none}
+}
+
+
+/* Sudoku on a short screen. A 9x9 grid plus a number pad needs more vertical
+   room than a 513px viewport has, so on short screens it sheds everything
+   optional: the status pill (the hint under the board says the same thing) and
+   most of the padding around the level chips.
+   The board still ends up small there. Small and fully visible beats large and
+   cut off -- a player who has to scroll to see the bottom three rows of a
+   Sudoku is not playing Sudoku. */
+@media (max-height:700px){
+  body:has(.sd-wrap) #sd-status{display:none}
+  body:has(.sd-wrap) .controls{gap:6px}
+  body:has(.sd-wrap) .sd-pad button{padding:5px 0}
+}
+
+/* ---------- Daily ----------
+   The header is a badge rather than an h1: the puzzle number is the identity
+   of a daily, and it is what a shared result refers to. */
+.dy-head{display:flex;align-items:center;gap:10px}
+.dy-num{
+  font-family:var(--font-display);
+  font-size:clamp(15px,3.6vw,19px);
+  color:#FFF;background:var(--ink);
+  padding:.25em .7em;border-radius:999px;
+}
+.dy-title{
+  font-family:var(--font-display);
+  font-size:clamp(17px,4.2vw,23px);
+  color:var(--ink);
+}
+/* The daily carries a puzzle-number badge and a timer/streak row that the
+   plain Sudoku page does not, so it gets its own budget rather than borrowing
+   one that is 42px optimistic. */
+body:has(#daily-board) .sd-wrap{
+  width:min(92vw, 440px, calc(100dvh - var(--chrome-daily)));
+}
+@media (max-height:700px){
+  body:has(#daily-board) .dy-head{display:none}
+  body:has(#daily-board) .tf-stats{gap:8px}
+}
+
+/* The daily banner. Above the game cards because it is the only thing on the
+   site with a reason to come back tomorrow. */
+.daily-banner{
+  display:flex;align-items:center;gap:clamp(10px,2.4vw,16px);
+  width:100%;max-width:520px;
+  padding:clamp(12px,2.6vw,16px);
+  border-radius:18px;
+  background:linear-gradient(120deg, var(--ink), #3B3D77);
+  color:#FFF;text-decoration:none;
+  box-shadow:var(--lift-lg);
+  transition:transform .12s ease;
+}
+.daily-banner:active{transform:scale(.985)}
+.db-badge{
+  font-family:var(--font-display);
+  font-size:clamp(11px,2.4vw,13px);
+  letter-spacing:.08em;text-transform:uppercase;
+  background:var(--gold);color:var(--ink);
+  padding:.35em .7em;border-radius:999px;flex:0 0 auto;
+}
+.db-text{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0}
+.db-title{font-family:var(--font-display);font-size:clamp(15px,3.6vw,19px)}
+.db-sub{font-size:clamp(12px,2.8vw,14px);opacity:.82;line-height:1.35}
+.db-go{font-size:clamp(18px,4vw,24px);opacity:.7;flex:0 0 auto}
+
+/* The end-of-game slot. Hidden until game_end, and positioned as the last
+   element on the page so that filling it cannot move anything above it --
+   including the replay button. */
+.endgame{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  width:100%;
+  animation:egIn .28s ease-out;
+}
+@keyframes egIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .endgame{animation:none} }
+
+/* 2048 reuses Snake's level furniture: same bar, same pop, same celebration.
+   A second visual language for the same mechanic would teach players that the
+   two are different things, and they are not. */
+.tf-wrap{position:relative}
+body:has(.tf-wrap) .sn-bar{
+  width:min(88vw, 420px, calc(100dvh - var(--chrome-2048)));
+}
+
+/* Memory faces are inline SVG now, not glyphs -- identical on every platform
+   and worth remembering, which matters in a game about remembering. */
+.mm-face svg{width:62%;height:62%;display:block}
+
+/* ---- Near-miss feedback -------------------------------------------------
+   One line, below the actions, shown only at game end. Quiet on purpose: it
+   is information about the round just played, not a call to action, and it
+   must never compete with the replay button sitting above it. */
+.near-miss{
+  margin: .5rem auto 0;
+  max-width: 30rem;
+  text-align: center;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--muted, #4A4C9B);
+  letter-spacing: .01em;
+}
+.near-miss[hidden]{ display: none; }
+
+/* ---- The daily hub ------------------------------------------------------
+   Today's result, on the card. Quiet: it is a record of what happened, not a
+   call to action, and it must never compete with the game's own name. The
+   played state is carried by a border as well as by colour, so the difference
+   is visible without relying on hue. */
+.today-summary{
+  margin: 0 0 .85rem;
+  text-align: center;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--muted, #4A4C9B);
+}
+.today-summary[hidden], .gc-today[hidden], .db-today[hidden]{ display: none; }
+
+.gc-today{
+  display: inline-block;
+  margin-top: .45rem;
+  padding: .16rem .5rem;
+  border-radius: 999px;
+  background: var(--line, #DDE2FF);
+  color: var(--frame, #4A4C9B);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.game-card[data-played="today"]{
+  border-color: var(--o, #2BC4AE);
+}
+.game-card[data-played="today"] .gc-today{
+  background: #DCF7F2;
+  color: #14776B;
+}
+.db-today{
+  margin-left: auto;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.28);
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---- Daily archive ------------------------------------------------------
+   Two quiet arrows either side of the puzzle number, and a band that appears
+   only when you are not on today. Nothing announces the archive on the day
+   you arrive: today's puzzle is the point, and the archive is what you find
+   when you want more. */
+.dy-arrow{
+  text-decoration: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0 .45rem;
+  color: var(--frame, #4A4C9B);
+  opacity: .5;
+  border-radius: 8px;
+}
+.dy-arrow:hover, .dy-arrow:focus-visible{ opacity: 1; }
+.dy-arrow[hidden]{ display: none; }
+.dy-archive{
+  margin: .35rem 0 0;
+  text-align: center;
+  font-size: .9rem;
+  color: var(--muted, #4A4C9B);
+}
+.dy-archive[hidden]{ display: none; }

@@ -1,0 +1,66 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+override.tf
+override.tf.json
+
+# Secrets — never commit
+*.pem
+*.key
+.env
+.env.*
+credentials
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Build
+dist/
+node_modules/
+
+# Go build output. A Go binary takes its directory's name and has no
+# extension, so it looks like a source file to a careless `git add -A` --
+# which is how 28MB of compiled binaries ended up tracked here.
+services/*/ad-server
+services/*/cost-fuse
+tools/adlabctl/adlabctl
+tools/trafficsim/trafficsim
+tools/yieldctl/yieldctl
+tools/integrityctl/integrityctl
+tools/build/ogimage/ogimage
+*.test
+
+# Terraform
+.terraform/
+# Only the generated output directories. A bare `build/` also matched
+# tools/build/, so the entire build toolchain was silently never committed --
+# a fresh clone could not build or deploy the site, and CI could not run.
+apps/publisher/build/
+services/ad-server/build/
+services/cost-fuse/build/
+infrastructure/ad-server/build/
+dist/
+
+# dist/ is build output -- except for the listings, which are not.
+#
+# LISTINGS.md is hand-written: six games' titles, descriptions and tags, with
+# no generator behind them. It sat inside an ignored directory for weeks, which
+# meant the only copy of the words that sell this project lived on one laptop.
+# The ZIPs and covers stay ignored because a script rebuilds them exactly.
+!dist/itch/LISTINGS.md
+
+# Terraform's lambda build artefact, rebuilt from lambda/ on every apply.
+infrastructure/scheduler/build/
+
+# Account-specific Makefile values and personal Claude instructions
+local.mk
+CLAUDE.local.md
+
+__pycache__/
+*.pyc

@@ -1,0 +1,227 @@
+name: Fleet
+
+# The four agents nothing was running.
+#
+# FinOps, Demand, Product and Supply chain were built, tested, documented and
+# then never scheduled -- which the Orchestrator's health check found the first
+# time it was asked whether the fleet was alive rather than merely capable.
+#
+# Split into two jobs, because the reason each was idle is different:
+#
+#   outward  Product's benchmark and Supply chain's verification need no
+#            traffic at all. They have been runnable since the day they were
+#            written, and there is no excuse for their silence.
+#   inward   FinOps and Demand genuinely cannot say anything without events.
+#            They run, find nothing, and say so -- which is a report, not a
+#            failure.
+#
+# Everything here REPORTS. Nothing applies a change. The proposal path stays in
+# agent-proposals.yml, where it gets a pull request and a human.
+on:
+  schedule:
+    - cron: '50 4 * * *'   # after the nightly report, before the briefing
+  workflow_dispatch:
+    inputs:
+      report:
+        description: 'Send the agent digest to Telegram, whatever day it is'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # to record what has already been proposed
+  issues: write     # findings become issues, not pull requests
+  id-token: write
+
+concurrency:
+  group: fleet
+  cancel-in-progress: false
+
+jobs:
+  outward:
+    name: agents that need no traffic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # --propose is what turns a finding into work. Without it this agent ran
+      # daily for days, printed a ranked answer, sent it to a phone, and stopped
+      # -- and an agent whose findings never become tracked work is a very
+      # well-tested opinion generator.
+      - name: product benchmark
+        id: product
+        run: |
+          go -C tools/productctl run . benchmark \
+            --landscape ../../product/landscape.json \
+            --propose ../../state/product-proposal.json \
+            --issue-body /tmp/product-issue.md | tee /tmp/product.txt
+          if grep -q '^CHANGED ' /tmp/product.txt; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # An ISSUE, not a pull request. The split is the authority rule in
+      # CLAUDE.md: a PARAMETER change is a diff a human merges, an OBSERVATION
+      # is a discussion. "Build near-miss feedback" is product work -- which is
+      # architecture, and architecture is where agents stop.
+      - name: raise it
+        if: steps.product.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          pick=$(grep -m1 '^CHANGED ' /tmp/product.txt | sed 's/^CHANGED //')
+
+          # Read the PREVIOUS issue before the record is overwritten. Without
+          # this the agent opened a fresh issue every time its ranking moved
+          # and left the old one open -- two were already stacked up, each
+          # superseded by the next, with nothing saying so.
+          prev=$(python3 -c "
+          import json, pathlib
+          p = pathlib.Path('state/product-proposal.json')
+          print(json.loads(p.read_text()).get('issue', '') if p.exists() else '')
+          " 2>/dev/null || echo "")
+
+          url=$(gh issue create \
+                  --title "Product agent proposes: $pick" \
+                  --body-file /tmp/product-issue.md --label agent)
+          echo "$url"
+
+          # Superseded, not silently abandoned. The old proposal is still a
+          # record of what was recommended and when; closing it with a pointer
+          # keeps that readable instead of leaving a pile of stale advice.
+          if [ -n "$prev" ] && [ "$prev" != "$url" ]; then
+            gh issue close "$prev" --comment "Superseded by $url — the ranking moved on.
+
+          The candidates in this issue are still in \`product/landscape.json\`; they
+          are simply no longer the top picks. Nothing here was rejected, and
+          nothing was built because of it. Closing so the open list shows what
+          the agent recommends **now** rather than everything it has ever
+          recommended." || echo "could not close $prev"
+          fi
+
+          # Recorded only now, because the record means "an issue exists" and
+          # nothing before this line knew whether that was true. The first
+          # version wrote it inside the tool, before the create -- so the run
+          # that failed to raise the finding also marked it as raised, and
+          # suppressed it permanently.
+          next_id=${pick%% *}
+          dir_id=${pick##* }
+          # printf, not a heredoc: a heredoc terminator has to sit at column 0,
+          # which ends the `run: |` block and makes the whole workflow file
+          # unparseable. That is exactly how agent-proposals.yml spent its first
+          # week never running, and I wrote it again here two days later.
+          printf '{\n  "next": "%s",\n  "direction": "%s",\n  "raised_on": "%s",\n  "issue": "%s"\n}\n' \
+            "$next_id" "$dir_id" "$(date -u +%Y-%m-%d)" "$url" \
+            > state/product-proposal.json
+          git config user.name  "${{ vars.COMMIT_AUTHOR_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.COMMIT_AUTHOR_EMAIL || '41898282+github-actions[bot]@users.noreply.github.com' }}"
+          git add state/product-proposal.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Product agent: raised $pick"
+            # Rebase and retry: five workflows commit to main, and two that
+            # overlap lose a race. The Orchestrator detected an achievement,
+            # committed it, and had the push rejected because the Fleet agent
+            # pushed a proposal record a second earlier -- so the work was done,
+            # the messages were sent, and the commit evaporated.
+            #
+            # These are append-only state files written by different agents, so a
+            # rebase is always safe here: nothing they touch overlaps.
+            for attempt in 1 2 3; do
+              git pull --rebase --autostash -q origin main || true
+              git push && break
+              echo "push rejected, retrying ($attempt)"; sleep 5
+            done
+          fi
+
+          head -20 /tmp/product-issue.md > /tmp/short.md
+          python3 tools/notify/telegram.py \
+            --title "Product agent proposes a change" \
+            --body-file /tmp/short.md --url "$url" || true
+
+      # --local, not the network: this verifies OUR files are internally
+      # consistent. Walking the live chain hits third-party servers, which is a
+      # deliberate act rather than something a nightly job should do unasked.
+      - name: supply chain
+        run: go -C tools/supplychain run . --local | tee /tmp/chain.txt
+
+      # These three run every day and, until now, wrote to a log nobody opens.
+      # An agent whose findings never leave the runner is indistinguishable from
+      # one that is not running.
+      #
+      # Weekly, and one message. Four messages a day buys a muted channel, and
+      # these findings move slowly on purpose -- a product benchmark that
+      # changed daily would be measuring noise.
+      - name: what the fleet found
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Sunday only, unless asked. The decision lives here rather than in
+          # an `if:` expression because one shell line reading `date +%u` is
+          # legible, and the GitHub expression that says the same thing is not.
+          if [ "${{ github.event.inputs.report }}" != "true" ] && [ "$(date -u +%u)" != "7" ]; then
+            echo "not Sunday — the digest is weekly"; exit 0
+          fi
+          python3 tools/notify/digest.py \
+            --product /tmp/product.txt \
+            --supplychain /tmp/chain.txt \
+            --signals product/signals.json > /tmp/digest.txt
+          cat /tmp/digest.txt
+          python3 tools/notify/telegram.py \
+            --title "What the agents found this week" --body-file /tmp/digest.txt
+
+  inward:
+    name: agents that need traffic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_REPORT_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: fetch yesterday's events
+        id: fetch
+        run: |
+          day=$(date -u -d yesterday +%Y-%m-%d)
+          mkdir -p /tmp/events
+          aws s3 cp "s3://adtech-lab-events-${{ secrets.AWS_ACCOUNT_ID }}/events/dt=$day/" /tmp/events/ \
+            --recursive --quiet 2>/dev/null || true
+          # --recursive keeps the key's subdirectories, so a nested file is
+          # counted by find and then missed by the tools' flat glob. Flatten,
+          # then count with the SAME pattern the tools use -- counting one
+          # thing and globbing another is how a guarded step runs anyway and
+          # dies on "no files matched".
+          find /tmp/events -mindepth 2 -type f -exec mv -f {} /tmp/events/ \; 2>/dev/null || true
+          n=$(ls /tmp/events/*.ndjson* 2>/dev/null | wc -l | tr -d ' ')
+          echo "files=${n:-0}" >> "$GITHUB_OUTPUT"
+          echo "matched $n event files"
+
+      - name: finops
+        if: steps.fetch.outputs.files != '0' && steps.fetch.outputs.files != ''
+        run: |
+          go -C tools/finopsctl run . publishers --events '/tmp/events/*.ndjson*'
+          go -C tools/finopsctl run . buyers     --events '/tmp/events/*.ndjson*'
+
+      - name: demand
+        if: steps.fetch.outputs.files != '0' && steps.fetch.outputs.files != ''
+        run: go -C tools/demandctl run . analyse --events '/tmp/events/*.ndjson*'
+
+      # Not a failure. An agent with nothing to say must say that, rather than
+      # producing an empty report that looks like a healthy one.
+      - name: no events
+        if: steps.fetch.outputs.files == '0' || steps.fetch.outputs.files == ''
+        run: echo "No events yesterday. Expected until the site has traffic."

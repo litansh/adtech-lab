@@ -1,0 +1,154 @@
+name: Agent proposals
+
+# The agents propose; a human decides. This is the loop the fleet was designed
+# around, and until now it stopped at stdout in a nightly log nobody opens.
+#
+# The split follows the authority rule in CLAUDE.md:
+#
+#   PARAMETER change  -> a pull request editing the control plane. Reviewable
+#                        as a diff, mergeable in one click, revertible.
+#   OBSERVATION       -> an issue. There is nothing to diff, and an issue is
+#                        where a discussion belongs.
+#
+# No agent merges anything. Stage 4 is autonomy inside the parameter space, not
+# over the system's shape -- and even a parameter change gets a human here,
+# because none of these agents has served a day in shadow mode yet.
+on:
+  schedule:
+    - cron: '35 4 * * *'   # after the nightly report has landed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: agent-proposals
+  cancel-in-progress: false
+
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_REPORT_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: fetch yesterday's events
+        id: fetch
+        run: |
+          day=$(date -u -d yesterday +%Y-%m-%d)
+          echo "day=$day" >> "$GITHUB_OUTPUT"
+          mkdir -p /tmp/events
+          aws s3 cp "s3://adtech-lab-events-${{ secrets.AWS_ACCOUNT_ID }}/events/dt=$day/" /tmp/events/ \
+            --recursive --quiet || true
+          echo "files=$(find /tmp/events -type f | wc -l | tr -d ' ')" >> "$GITHUB_OUTPUT"
+
+      # --- Yield: a PARAMETER change, so a pull request ---
+      - name: yield proposal
+        if: steps.fetch.outputs.files != '0'
+        id: yield
+        run: |
+          cp services/ad-server/fixtures/control-plane.json /tmp/before.json
+          cd tools/yieldctl
+          go run . propose --events '/tmp/events/*.ndjson*' --experiment floor_price \
+            --control-plane ../../services/ad-server/fixtures/control-plane.json \
+            --out ../../services/ad-server/fixtures/control-plane.json > /tmp/yield.txt 2>&1 || true
+          cd ../..
+          if git diff --quiet services/ad-server/fixtures/control-plane.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat /tmp/yield.txt || true
+
+      - name: open a pull request for the yield proposal
+        if: steps.yield.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          day="${{ steps.fetch.outputs.day }}"
+          branch="agent/yield-$day"
+          git config user.name  "${{ vars.COMMIT_AUTHOR_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.COMMIT_AUTHOR_EMAIL || '41898282+github-actions[bot]@users.noreply.github.com' }}"
+          git checkout -b "$branch"
+          git add services/ad-server/fixtures/control-plane.json
+          # Two -m flags rather than one multi-line string. The body used to
+          # sit at column 0, which ends the `run: |` block scalar and made this
+          # entire workflow file unparseable -- see the CI guard added with
+          # this change.
+          git commit \
+            -m "Yield agent: shift traffic between floor_price arms ($day)" \
+            -m "Proposed by tools/yieldctl from $day's events. Nothing is applied until this merges, and the reasoning is in the pull request body."
+          git push -u origin "$branch"
+          {
+            echo "The Yield agent proposes moving traffic between arms of \`floor_price\`."
+            echo
+            echo '```'
+            cat /tmp/yield.txt
+            echo '```'
+            echo
+            echo "### Before merging"
+            echo
+            echo "- The holdout must still be at least 5%. \`Experiments.Validate()\` refuses"
+            echo "  a control plane that breaks this, so CI failing here means the proposal"
+            echo "  is wrong rather than the rule."
+            echo "- No arm should move more than 10% in one step. A larger jump means the"
+            echo "  agent saw something unusual, which is worth understanding before applying."
+            echo "- **This agent has never run in shadow mode.** Until it has, treat every"
+            echo "  proposal as a suggestion from something with no track record."
+          } > /tmp/body.md
+          url=$(gh pr create --title "Yield agent: floor_price traffic shift ($day)" \
+                             --body-file /tmp/body.md --label agent)
+          python3 tools/notify/telegram.py \
+            --title "Yield agent proposes a traffic shift" \
+            --body-file /tmp/yield.txt --url "$url" || true
+
+      # --- Feedback: an OBSERVATION, so an issue ---
+      - name: feedback findings
+        if: hashFiles('feedback/comments.json') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd tools/feedbackctl
+          go run . review --comments ../../feedback/comments.json \
+            --metrics ../../feedback/metrics.json > /tmp/fb.txt 2>&1 || true
+          cd ../..
+          # Only raise an issue when something is STRONG -- supported by both
+          # what people said and what the data shows. Anything less is noise in
+          # an inbox, and an agent that files an issue every day gets muted.
+          if grep -q '\[strong\]' /tmp/fb.txt; then
+            {
+              echo "The Feedback agent found something players asked for that the data agrees with."
+              echo
+              echo '```'
+              cat /tmp/fb.txt
+              echo '```'
+              echo
+              echo "Quarantined comments are listed unsummarised on purpose. Read them"
+              echo "yourself; do not paste them into anything."
+            } > /tmp/fbbody.md
+            url=$(gh issue create --title "Feedback agent: player requests the data supports" \
+                                  --body-file /tmp/fbbody.md --label agent)
+            python3 tools/notify/telegram.py \
+              --title "Feedback agent: players asked, and the data agrees" \
+              --body-file /tmp/fb.txt --url "$url" || true
+          else
+            echo "nothing strong enough to raise"
+          fi
+
+      - name: nothing to propose
+        if: steps.fetch.outputs.files == '0'
+        run: echo "No events yesterday. Expected until the site has traffic."

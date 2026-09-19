@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cmp-acme-retarget",
+    "name": "Acme retargeting",
+    "max_cpm": 12.0,
+    "daily_budget": 200.0,
+    "countries": [
+      "IL",
+      "US"
+    ],
+    "sizes": [
+      "300x250"
+    ],
+    "freq_cap_per_user": 0,
+    "creative_html": "<div style=\"font:600 15px system-ui;display:grid;place-items:center;height:100%;background:#2BC4AE;color:#fff\">Acme &mdash; try it free</div>"
+  },
+  {
+    "id": "cmp-northwind-brand",
+    "name": "Northwind brand",
+    "max_cpm": 2.2,
+    "daily_budget": 10.0,
+    "countries": [],
+    "sizes": [
+      "300x250"
+    ],
+    "freq_cap_per_user": 8,
+    "creative_html": "<div style=\"font:600 15px system-ui;display:grid;place-items:center;height:100%;background:#FF6B35;color:#fff\">Northwind</div>"
+  }
+]

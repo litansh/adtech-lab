@@ -1,0 +1,378 @@
+{
+  "publishers": [
+    {
+      "id": "pub-xoxoxo",
+      "name": "The Game Room",
+      "revenue_share": 0.85
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-xoxoxo",
+      "publisher_id": "pub-xoxoxo",
+      "domain": "xoxoxo.live"
+    }
+  ],
+  "placements": [
+    {
+      "id": "game_sidebar",
+      "site_id": "site-xoxoxo",
+      "w": 300,
+      "h": 250
+    }
+  ],
+  "advertisers": [
+    {
+      "id": "adv-house",
+      "name": "The Game Room (house)"
+    },
+    {
+      "id": "adv-acme",
+      "name": "Acme Puzzles"
+    },
+    {
+      "id": "adv-northwind",
+      "name": "Northwind Games"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "camp-acme-summer",
+      "advertiser_id": "adv-acme",
+      "name": "Acme Summer Sale",
+      "status": "ACTIVE",
+      "flight_start": "2026-08-01T00:00:00Z",
+      "flight_end": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "camp-northwind-us",
+      "advertiser_id": "adv-northwind",
+      "name": "Northwind US Launch",
+      "status": "ACTIVE",
+      "flight_start": "2026-08-01T00:00:00Z",
+      "flight_end": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "camp-house",
+      "advertiser_id": "adv-house",
+      "name": "House ads",
+      "status": "ACTIVE",
+      "flight_start": "2026-01-01T00:00:00Z",
+      "flight_end": "2030-01-01T00:00:00Z"
+    }
+  ],
+  "line_items": [
+    {
+      "id": "li-acme-cpm",
+      "campaign_id": "camp-acme-summer",
+      "name": "Acme Summer - IL desktop CPM",
+      "status": "ACTIVE",
+      "priority": 5,
+      "pricing_model": "CPM",
+      "rate": 4.0,
+      "daily_budget": 5.0,
+      "targeting": {
+        "countries": [
+          "IL"
+        ],
+        "device_types": [
+          "desktop"
+        ],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-acme-300x250"
+      ],
+      "frequency_cap": {
+        "impressions": 3,
+        "scope": "session"
+      },
+      "pacing": "even"
+    },
+    {
+      "id": "li-northwind-us",
+      "campaign_id": "camp-northwind-us",
+      "name": "Northwind - US only CPC",
+      "status": "ACTIVE",
+      "priority": 5,
+      "pricing_model": "CPC",
+      "rate": 0.45,
+      "expected_ctr": 0.009,
+      "daily_budget": 10.0,
+      "targeting": {
+        "countries": [
+          "US"
+        ],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-northwind-300x250"
+      ],
+      "frequency_cap": {
+        "impressions": 3,
+        "scope": "session"
+      },
+      "pacing": "even"
+    },
+    {
+      "id": "li-house-fallback",
+      "campaign_id": "camp-house",
+      "name": "House fallback - always eligible",
+      "status": "ACTIVE",
+      "priority": 0,
+      "pricing_model": "CPM",
+      "rate": 0.0,
+      "daily_budget": 0,
+      "targeting": {
+        "countries": [],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-house-300x250"
+      ],
+      "pacing": "asap"
+    }
+  ],
+  "creatives": [
+    {
+      "id": "cr-acme-300x250",
+      "w": 300,
+      "h": 250,
+      "click_url": "https://example.com/acme",
+      "html": "<body style=\"margin:0;display:grid;place-items:center;height:250px;font:600 22px system-ui;background:linear-gradient(135deg,#F2622E,#FFB627);color:#fff;cursor:pointer\">Acme Puzzles<br><small style=\"font-weight:400;font-size:14px\">Summer Sale</small></body>"
+    },
+    {
+      "id": "cr-northwind-300x250",
+      "w": 300,
+      "h": 250,
+      "click_url": "https://example.com/northwind",
+      "html": "<body style=\"margin:0;display:grid;place-items:center;height:250px;font:600 22px system-ui;background:#0FAE9A;color:#fff\">Northwind Games</body>"
+    },
+    {
+      "id": "cr-house-300x250",
+      "w": 300,
+      "h": 250,
+      "click_url": "/",
+      "html": "<body style=\"margin:0;display:grid;place-items:center;height:250px;font:600 20px system-ui;background:#E6EAFF;color:#23244A\">More games soon</body>"
+    },
+    {
+      "id": "cr-buyer-300x250",
+      "w": 300,
+      "h": 250,
+      "click_url": "https://example.com/buyer",
+      "html": "<body style=\"margin:0;display:grid;place-items:center;height:250px;font:600 20px system-ui;background:#4A4FA8;color:#fff\">Programmatic</body>"
+    }
+  ],
+  "buyers": [
+    {
+      "id": "buyer-premium",
+      "name": "Premium Retargeter",
+      "base_cpm": 9.5,
+      "variance": 0.25,
+      "bid_rate": 0.35,
+      "timeout_rate": 0.04,
+      "latency_ms": 45,
+      "daily_budget": 8.0,
+      "targeting": {
+        "countries": [
+          "IL",
+          "US"
+        ],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-buyer-300x250"
+      ],
+      "field_sensitivity": {
+        "user_eids": 0.55
+      }
+    },
+    {
+      "id": "buyer-midmarket",
+      "name": "Mid-market DSP",
+      "base_cpm": 4.2,
+      "variance": 0.3,
+      "bid_rate": 0.7,
+      "timeout_rate": 0.06,
+      "latency_ms": 70,
+      "daily_budget": 12.0,
+      "targeting": {
+        "countries": [],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-buyer-300x250"
+      ],
+      "field_sensitivity": {
+        "device_ua": 0.25
+      }
+    },
+    {
+      "id": "buyer-mobile",
+      "name": "Mobile specialist",
+      "base_cpm": 3.1,
+      "variance": 0.2,
+      "bid_rate": 0.8,
+      "timeout_rate": 0.03,
+      "latency_ms": 38,
+      "daily_budget": 10.0,
+      "targeting": {
+        "countries": [],
+        "device_types": [
+          "mobile"
+        ],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-buyer-300x250"
+      ]
+    },
+    {
+      "id": "buyer-longtail",
+      "name": "Long-tail network",
+      "base_cpm": 1.1,
+      "variance": 0.4,
+      "bid_rate": 0.92,
+      "timeout_rate": 0.02,
+      "latency_ms": 55,
+      "daily_budget": 0,
+      "targeting": {
+        "countries": [],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-buyer-300x250"
+      ]
+    },
+    {
+      "id": "buyer-slow",
+      "name": "Slow but rich",
+      "base_cpm": 11.0,
+      "variance": 0.15,
+      "bid_rate": 0.6,
+      "timeout_rate": 0.75,
+      "latency_ms": 260,
+      "daily_budget": 15.0,
+      "targeting": {
+        "countries": [],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": [
+        "cr-buyer-300x250"
+      ]
+    },
+    {
+      "id": "buyer-mini-dsp",
+      "name": "mini-dsp (real, over HTTP)",
+      "endpoint": "http://127.0.0.1:8081/bid",
+      "base_cpm": 0,
+      "variance": 0,
+      "bid_rate": 0,
+      "timeout_rate": 0,
+      "latency_ms": 0,
+      "targeting": {
+        "countries": [],
+        "device_types": [],
+        "games": [],
+        "placements": []
+      },
+      "creative_ids": []
+    }
+  ],
+  "experiments": [
+    {
+      "key": "floor_price",
+      "active": true,
+      "unit": "session",
+      "control_id": "ctrl",
+      "variants": [
+        {
+          "id": "ctrl",
+          "params": {
+            "floor_cpm": "0.50"
+          },
+          "bucket_start": 0,
+          "bucket_end": 2000
+        },
+        {
+          "id": "f100",
+          "params": {
+            "floor_cpm": "1.00"
+          },
+          "bucket_start": 2000,
+          "bucket_end": 6000
+        },
+        {
+          "id": "f200",
+          "params": {
+            "floor_cpm": "2.00"
+          },
+          "bucket_start": 6000,
+          "bucket_end": 10000
+        }
+      ]
+    },
+    {
+      "key": "buyer_tmax",
+      "active": true,
+      "unit": "placement",
+      "control_id": "ctrl",
+      "variants": [
+        {
+          "id": "ctrl",
+          "params": {
+            "tmax_ms": "100"
+          },
+          "bucket_start": 0,
+          "bucket_end": 5000
+        },
+        {
+          "id": "t150",
+          "params": {
+            "tmax_ms": "150"
+          },
+          "bucket_start": 5000,
+          "bucket_end": 10000
+        }
+      ]
+    },
+    {
+      "key": "field.user_eids",
+      "active": true,
+      "unit": "placement",
+      "control_id": "send",
+      "variants": [
+        {
+          "id": "send",
+          "params": {
+            "mode": "send"
+          },
+          "bucket_start": 0,
+          "bucket_end": 5000
+        },
+        {
+          "id": "omit",
+          "params": {
+            "mode": "omit"
+          },
+          "bucket_start": 5000,
+          "bucket_end": 10000
+        }
+      ]
+    }
+  ]
+}

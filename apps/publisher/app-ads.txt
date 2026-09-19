@@ -1,0 +1,22 @@
+# app-ads.txt — Authorized Sellers for Apps (IAB Tech Lab spec v1.0)
+#
+# The mobile counterpart to ads.txt. A buyer takes the bundle id from a bid
+# request, looks up the app's store listing, reads the developer website from
+# it, and fetches THIS file from that domain. The chain is the same idea as
+# ads.txt with one extra hop, and the extra hop is why the developer URL on the
+# store listing has to be right or the file is never found.
+#
+# There is no app yet. This file exists because it costs nothing now and is
+# needed on the day one ships -- and because an app-ads.txt that appears only
+# after launch means the first days of a new app's inventory are unauthorised,
+# which is exactly when buyers are deciding whether the supply is worth having.
+#
+# The placeholder record is the spec's prescribed value for "no authorised
+# sellers", not a value to substitute. Real entries go in when a real app and a
+# real selling relationship exist.
+#
+# See docs/supply-chain.md and ADR 0004 (PWA first, native app later).
+
+placeholder.example.com, placeholder, DIRECT, placeholder
+
+CONTACT=litansh@gmail.com

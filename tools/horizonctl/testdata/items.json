@@ -1,0 +1,8 @@
+[
+  {"title":"Show HN: A daily connections-style grouping game","url":"https://a","points":420,"source":"hn","when":"2026-06-01"},
+  {"title":"Show HN: I built a word game","url":"https://b","points":300,"source":"hn","when":"2026-05-01"},
+  {"title":"My anagram puzzle got 10k players","url":"https://c","points":90,"source":"hn","when":"2026-05-02"},
+  {"title":"Show HN: a sudoku variant with a daily streak","url":"https://d","points":150,"source":"hn","when":"2026-04-01"},
+  {"title":"Nonogram solver in Rust","url":"https://e","points":40,"source":"lobsters","when":"2026-03-01"},
+  {"title":"Weekly showcase thread","url":"https://f","points":0,"source":"reddit/WebGames","when":"2026-08-01"}
+]

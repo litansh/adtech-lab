@@ -1,0 +1,73 @@
+name: Deploy ad server
+
+# Ships the ad server's CODE. Infrastructure stays with Terraform and a human:
+# code changes weekly and is covered by tests; the shape of the system changes
+# rarely and deserves a plan somebody reads.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/ad-server/**'
+      - '.github/workflows/deploy-ad-server.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-ad-server
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: services/ad-server/go.sum
+
+      # Tested before shipped. This is the ad serving path: a bad deploy here
+      # does not look broken, it looks like weak demand.
+      - name: go test -race
+        working-directory: services/ad-server
+        run: go test ./... -race -count=1
+
+      - name: build for Graviton
+        run: |
+          cd services/ad-server
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
+            go build -tags lambda -ldflags="-s -w" -o bootstrap .
+          zip -q ad-server.zip bootstrap
+          ls -lh ad-server.zip
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: update function code
+        run: |
+          cd services/ad-server
+          aws lambda update-function-code \
+            --function-name adtech-lab-ad-server \
+            --zip-file fileb://ad-server.zip \
+            --output text --query 'LastUpdateStatus'
+          aws lambda wait function-updated \
+            --function-name adtech-lab-ad-server
+
+      - name: verify the deployed function answers
+        run: |
+          url=$(aws lambda get-function --function-name adtech-lab-ad-server \
+                  --query 'Configuration.FunctionName' --output text)
+          echo "deployed: $url"
+          # The public check: the live endpoint must still serve an ad.
+          code=$(curl -s -o /tmp/resp.json -w '%{http_code}' -X POST https://xoxoxo.live/ad/request \
+            -H 'Content-Type: application/json' \
+            -H 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) AppleWebKit/605.1.15 Safari/604.1' \
+            -d '{"placement_id":"game_sidebar","game":"xo","session_id":"ci-verify","device_type":"mobile","w":300,"h":250,"env":"lab"}')
+          echo "POST /ad/request -> $code"
+          head -c 300 /tmp/resp.json; echo
+          [ "$code" = "200" ] || exit 1

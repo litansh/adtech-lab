@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  /* Rendered at exactly 630x500 -- itch's recommended cover ratio. Anything
+     else gets cropped, usually through the title. */
+  :root{ --ink:#23244A; --surface:#FFFFFF; --line:#DDE2FF; --accent:__ACCENT__; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    width:630px;height:500px;overflow:hidden;
+    background:linear-gradient(155deg,#F5F6FF 0%,#E4E8FF 100%);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:36px;position:relative;
+  }
+  /* A tint of the game's own accent, so six covers read as a set on a browse
+     page without any two being mistaken for each other. */
+  .wash{
+    position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 34%, var(--accent) 0%, transparent 62%);
+    opacity:.16;
+  }
+  .tile{
+    width:210px;height:210px;background:var(--surface);
+    border:4px solid var(--line);border-radius:46px;
+    display:grid;place-items:center;
+    box-shadow:0 16px 0 rgba(35,36,74,.10);
+    position:relative;
+  }
+  .tile svg{width:132px;height:132px}
+  h1{margin-top:34px;font-size:56px;letter-spacing:-.02em;line-height:1;position:relative}
+  .hook{margin-top:14px;font-size:25px;color:#4A4C9B;position:relative;text-align:center}
+  .foot{
+    position:absolute;bottom:26px;
+    font-size:19px;font-weight:600;color:#8386BC;letter-spacing:.04em;
+  }
+</style></head>
+<body>
+  <div class="wash"></div>
+  <div class="tile">__ICON__</div>
+  <h1>__TITLE__</h1>
+  <p class="hook">__HOOK__</p>
+  <div class="foot">xoxoxo.live</div>
+</body></html>
