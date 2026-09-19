@@ -401,3 +401,7 @@ make og                 # regenerate the link-preview image
 | [adr/0005](docs/adr/0005-agentic-decisions-live-in-the-cold-path.md) | **Agentic decisions belong in the cold path** — the hot path reads a policy, never thinks |
 | [risks.md](docs/risks.md) | How this could go wrong |
 | [adr/](docs/adr/) | Decisions, with when to reconsider them |
+
+## License
+
+[MIT](LICENSE)
