@@ -1,66 +1,10 @@
 {
   "seen": {
-    "Demand": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/2",
-      "first_seen": "2026-09-19"
-    },
-    "Feedback": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/3",
-      "first_seen": "2026-09-19"
-    },
-    "FinOps": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/4",
-      "first_seen": "2026-09-19"
-    },
     "Horizon": {
       "state": "never run",
-      "consecutive_failures": 1,
+      "consecutive_failures": 2,
       "retried": false,
       "issue_url": "https://github.com/litansh/adtech-lab/issues/5",
-      "first_seen": "2026-09-19"
-    },
-    "Integrity": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/6",
-      "first_seen": "2026-09-19"
-    },
-    "Product": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/7",
-      "first_seen": "2026-09-19"
-    },
-    "Reliability": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/8",
-      "first_seen": "2026-09-19"
-    },
-    "Supply chain": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/9",
-      "first_seen": "2026-09-19"
-    },
-    "Yield": {
-      "state": "never run",
-      "consecutive_failures": 1,
-      "retried": false,
-      "issue_url": "https://github.com/litansh/adtech-lab/issues/10",
       "first_seen": "2026-09-19"
     }
   }
