@@ -1,6 +1,6 @@
 {
-  "scanned_at": "2026-09-14",
-  "items_read": 231,
+  "scanned_at": "2026-09-21",
+  "items_read": 232,
   "min_points": 20,
   "mechanics": [
     {
@@ -13,15 +13,15 @@
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 6,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
     },
     {
       "name": "score-attack",
-      "hits": 9,
+      "hits": 8,
       "points": 725,
       "we_ship_it": true,
       "example": "Starfling: A one-tap endless orbital slingshot game in a single HTML file",
@@ -29,8 +29,8 @@
     },
     {
       "name": "adversarial",
-      "hits": 3,
-      "points": 271,
+      "hits": 4,
+      "points": 302,
       "we_ship_it": true,
       "example": "Show HN: I made a little puzzle game about a rogue chess knight",
       "link": "https://knightride.rakhim.org/"
@@ -45,11 +45,11 @@
     },
     {
       "name": "physics",
-      "hits": 2,
+      "hits": 6,
       "points": 0,
       "we_ship_it": false,
-      "example": "Fool's Metal (Demo version) [Free] [Platformer]",
-      "link": "https://pickled-cactus-games.itch.io/fools-metal-playtest-version"
+      "example": "A Castle to the Past [Free] [Platformer] [Windows] [Linux]",
+      "link": "https://cabalcrow.itch.io/a-castle-to-the-past"
     }
   ],
   "meta_patterns": [
@@ -73,8 +73,8 @@
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 6,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
