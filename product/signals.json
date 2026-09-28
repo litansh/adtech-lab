@@ -1,11 +1,11 @@
 {
-  "scanned_at": "2026-09-14",
-  "items_read": 231,
+  "scanned_at": "2026-09-28",
+  "items_read": 230,
   "min_points": 20,
   "mechanics": [
     {
       "name": "word",
-      "hits": 22,
+      "hits": 23,
       "points": 2641,
       "we_ship_it": false,
       "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
@@ -13,8 +13,8 @@
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 7,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
@@ -22,22 +22,22 @@
     {
       "name": "score-attack",
       "hits": 9,
-      "points": 725,
+      "points": 726,
       "we_ship_it": true,
       "example": "Starfling: A one-tap endless orbital slingshot game in a single HTML file",
       "link": "https://playstarfling.com"
     },
     {
       "name": "adversarial",
-      "hits": 3,
-      "points": 271,
+      "hits": 4,
+      "points": 303,
       "we_ship_it": true,
       "example": "Show HN: I made a little puzzle game about a rogue chess knight",
       "link": "https://knightride.rakhim.org/"
     },
     {
       "name": "deduction",
-      "hits": 8,
+      "hits": 7,
       "points": 172,
       "we_ship_it": true,
       "example": "Show HN: Corporate Mind Games – logic puzzles with a sarcastic corporate theme",
@@ -48,15 +48,15 @@
       "hits": 2,
       "points": 0,
       "we_ship_it": false,
-      "example": "Fool's Metal (Demo version) [Free] [Platformer]",
-      "link": "https://pickled-cactus-games.itch.io/fools-metal-playtest-version"
+      "example": "save the carpincha [Free] [Platformer]",
+      "link": "https://thekiing197.itch.io/save-carpincha"
     }
   ],
   "meta_patterns": [
     {
       "name": "daily",
-      "hits": 23,
-      "points": 1618,
+      "hits": 19,
+      "points": 1462,
       "we_ship_it": false,
       "example": "Show HN: Gerrymandle - Daily puzzle game where you redraw electoral districts",
       "link": "https://gerrymandle.cc/"
@@ -65,7 +65,7 @@
   "gaps": [
     {
       "name": "word",
-      "hits": 22,
+      "hits": 23,
       "points": 2641,
       "we_ship_it": false,
       "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
@@ -73,8 +73,8 @@
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 7,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
