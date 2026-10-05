@@ -1,62 +1,70 @@
 {
-  "scanned_at": "2026-09-14",
-  "items_read": 231,
+  "scanned_at": "2026-10-05",
+  "items_read": 256,
   "min_points": 20,
   "mechanics": [
     {
       "name": "word",
       "hits": 22,
-      "points": 2641,
+      "points": 2585,
       "we_ship_it": false,
       "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
       "link": "https://www.whatsit.today/"
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 6,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
     },
     {
       "name": "score-attack",
-      "hits": 9,
-      "points": 725,
+      "hits": 6,
+      "points": 705,
       "we_ship_it": true,
       "example": "Starfling: A one-tap endless orbital slingshot game in a single HTML file",
       "link": "https://playstarfling.com"
     },
     {
-      "name": "adversarial",
-      "hits": 3,
-      "points": 271,
-      "we_ship_it": true,
-      "example": "Show HN: I made a little puzzle game about a rogue chess knight",
-      "link": "https://knightride.rakhim.org/"
-    },
-    {
       "name": "deduction",
-      "hits": 8,
-      "points": 172,
+      "hits": 6,
+      "points": 196,
       "we_ship_it": true,
       "example": "Show HN: Corporate Mind Games – logic puzzles with a sarcastic corporate theme",
       "link": "https://corporatemindgames.com/"
     },
     {
-      "name": "physics",
+      "name": "adversarial",
       "hits": 2,
+      "points": 104,
+      "we_ship_it": true,
+      "example": "Show HN: Swapple, a little daily puzzle on linear reversible circuit synthesis",
+      "link": "https://swapple.fuglede.dk"
+    },
+    {
+      "name": "physics",
+      "hits": 3,
       "points": 0,
       "we_ship_it": false,
-      "example": "Fool's Metal (Demo version) [Free] [Platformer]",
-      "link": "https://pickled-cactus-games.itch.io/fools-metal-playtest-version"
+      "example": "The Castle of Hell: Tophat's Revenge  (DEMO) [Free] [Platformer]",
+      "link": "https://volt-core-studios.itch.io/the-castle-of-hell-tophats-revenge-demo"
+    },
+    {
+      "name": "idle",
+      "hits": 1,
+      "points": 0,
+      "we_ship_it": false,
+      "example": "CORE!1! — a 2D incremental mining game you can play in your browser. Looking for honest feedback!",
+      "link": "https://www.reddit.com/r/playmygame/comments/1w8wot7/core1_a_2d_incremental_mining_game_you_can_play/"
     }
   ],
   "meta_patterns": [
     {
       "name": "daily",
-      "hits": 23,
-      "points": 1618,
+      "hits": 22,
+      "points": 1518,
       "we_ship_it": false,
       "example": "Show HN: Gerrymandle - Daily puzzle game where you redraw electoral districts",
       "link": "https://gerrymandle.cc/"
@@ -66,21 +74,19 @@
     {
       "name": "word",
       "hits": 22,
-      "points": 2641,
+      "points": 2585,
       "we_ship_it": false,
       "example": "Show HN: I built a word game. My mom thinks it's great. What do you think?",
       "link": "https://www.whatsit.today/"
     },
     {
       "name": "multiplayer",
-      "hits": 8,
-      "points": 1688,
+      "hits": 6,
+      "points": 1670,
       "we_ship_it": false,
       "example": "Show HN: Gaming Couch – a local multiplayer party game platform for 8 players",
       "link": "https://gamingcouch.com"
     }
   ],
-  "sources_unreadable": [
-    "reddit/playmygame: www.reddit.com returned 429"
-  ]
+  "sources_unreadable": null
 }
